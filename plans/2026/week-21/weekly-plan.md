@@ -20,7 +20,7 @@ tags:
 | 周一 | [恢复骑](../../library/recovery/recovery-spin.md) | 恢复、放松腿部 | `training/2026/week-21/notes/` |  |
 | 周二 | [Z2 有氧基础骑](../../library/endurance/z2-base-ride.md) | 有氧容量 | `training/2026/week-21/notes/` |  |
 | 周三 | [休息日](../../library/recovery/rest-day.md) | 恢复 |  |  |
-| 周四 | [甜区间歇](../../library/intervals/sweet-spot-intervals.md) | 稳态功率能力 | `training/2026/week-21/notes/` |  |
+| 周四 | [轻量甜区训练](2026-05-21-light-sweet-spot.md) | 稳态功率能力，控制疲劳 | `training/2026/week-21/notes/` | ZWO: [2026-05-21-light-sweet-spot.zwo](../../../workouts/zwo/2026-05-21-light-sweet-spot.zwo) |
 | 周五 | [休息日](../../library/recovery/rest-day.md) | 恢复 |  |  |
 | 周六 | [Z2 有氧基础骑](../../library/endurance/z2-base-ride.md) | 延长有氧时间 | `training/2026/week-21/notes/` |  |
 | 周日 | [FTP 测试准备](../../library/testing/ftp-test-prep.md) | 校准状态或准备测试 | `training/2026/week-21/notes/` | 可按疲劳调整 |
@@ -28,6 +28,7 @@ tags:
 ## 关键训练
 
 - [甜区间歇](../../library/intervals/sweet-spot-intervals.md)
+- [2026-05-21 轻量甜区训练](2026-05-21-light-sweet-spot.md)
 - [Z2 有氧基础骑](../../library/endurance/z2-base-ride.md)
 
 ## 风险与调整

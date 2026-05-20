@@ -1,0 +1,19 @@
+<workout_file>
+  <author>cycling-lab</author>
+  <name>2026-05-21 Light Sweet Spot</name>
+  <description>Reduced sweet-spot session based on 2026-05-19 and 2026-05-20 rides. FTP reference: 200 W. Keep heart rate controlled; stop after one main interval if RPE is too high.</description>
+  <sportType>bike</sportType>
+  <tags>
+    <tag name="sweet spot"/>
+    <tag name="controlled"/>
+    <tag name="week 21"/>
+  </tags>
+  <workout>
+    <Warmup Duration="900" PowerLow="0.45" PowerHigh="0.75"/>
+    <IntervalsT Repeat="3" OnDuration="30" OffDuration="90" OnPower="1.00" OffPower="0.50"/>
+    <SteadyState Duration="600" Power="0.91"/>
+    <SteadyState Duration="300" Power="0.50"/>
+    <SteadyState Duration="600" Power="0.91"/>
+    <Cooldown Duration="600" PowerLow="0.60" PowerHigh="0.40"/>
+  </workout>
+</workout_file>

@@ -33,6 +33,28 @@ python3 scripts/analyze_fit.py training/2026/week-21/fit/activity.fit \
 
 Use rider data from `profile/rider-profile.md` when available. If max heart rate or FTP is unknown, label zone guidance as estimated instead of definitive.
 
+For uploaded FIT files:
+
+- Determine the activity date from the FIT session timestamp when possible; otherwise use the current local date.
+- Store the raw file under `training/YYYY/week-NN/fit/` using a stable date-based filename if the upload name is unclear.
+- Write generated notes to `training/YYYY/week-NN/notes/`.
+- Pass known profile values from `profile/rider-profile.md` to the analyzer: age, height, weight, max heart rate, FTP, and athlete name.
+- After generating the note, summarize the ride in chat with the note path, primary intensity, heart-rate drift, cadence/power stability, and the next training implication.
+- If screenshots are provided with the FIT file, store them under `training/YYYY/week-NN/screenshots/` and link them from the note when useful.
+
+Preferred command shape:
+
+```bash
+python3 scripts/analyze_fit.py training/YYYY/week-NN/fit/activity.fit \
+  --athlete-name lxx \
+  --age 31 \
+  --height-cm 176 \
+  --weight-kg 70 \
+  --max-hr 203 \
+  --ftp 200 \
+  --out-dir training/YYYY/week-NN/notes
+```
+
 ## Plan Reuse
 
 When creating or editing daily/weekly plans:
@@ -42,6 +64,49 @@ When creating or editing daily/weekly plans:
 - If no suitable plan exists, create a new reusable plan under the right category, then reference it from the weekly plan.
 - Do not duplicate full workout details inside weekly plans.
 - If a workout needs a Zwift import file, place the `.zwo` file in `workouts/zwo/` and link it from the reusable plan.
+
+## Plan Generation
+
+Before generating plans, read `profile/rider-profile.md`, recent `training/YYYY/week-NN/notes/`, and the latest `review/YYYY/week-NN-review.md` when available. Account for current FTP, max heart rate, recent fatigue, target event goals, available weekday time, and weekend availability.
+
+Support two plan types:
+
+### Zwift / Indoor Power Workouts
+
+Use for weekday structured training or any request for precise power control.
+
+- Create or reuse a Markdown workout plan under `plans/library/` or `plans/YYYY/week-NN/`.
+- Create a matching `.zwo` file under `workouts/zwo/` when the workout should be imported into Zwift.
+- Prescribe intervals by FTP percentage and duration; include cadence targets only when useful.
+- Include warmup, main set, cooldown, target purpose, adjustment rules, and expected RPE/heart-rate response.
+- Keep weekly-plan entries concise and link to the detailed plan plus the ZWO file.
+
+### Weekend Outdoor Road Rides
+
+Use for weekend rides, endurance rides, long routes, climbing practice, or any ride where terrain and execution cannot be controlled precisely.
+
+- Recommend route type: flat, rolling, hilly/mountain, or mixed.
+- Prescribe target distance, elevation gain, expected duration, intensity cap, and bailout option.
+- Give control guidance as ranges, not exact intervals: heart-rate zones, power ranges as FTP percentage, RPE, and cadence where relevant.
+- Separate guidance for flats, rollers, climbs, descents, and final hour if the ride is long.
+- Include fueling and hydration plan:
+  - Carbohydrate target in g/hour, with examples using gels, drink mix, bars, or normal food.
+  - Fluid target in ml/hour, adjusted for heat when known.
+  - Sodium target in mg/hour or salt-tablet timing when relevant.
+  - Caffeine guidance only if the user asks or the ride is long enough to justify it.
+- Include pre-ride meal timing, on-bike fueling schedule, emergency reserve, and post-ride recovery.
+- Prefer conservative progression after hard weeks or high heart-rate drift. For recovery weeks, reduce either distance, elevation, or intensity rather than stacking all three.
+
+Outdoor ride output should be usable without a route file. Minimum sections:
+
+- Ride objective
+- Route choice
+- Distance/elevation/duration target
+- Intensity control
+- Terrain execution
+- Fueling and hydration
+- Bailout and adjustment rules
+- What data to review afterward
 
 ## Note Style
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cycling FIT Analysis"
+  short_description: "Analyze cycling FIT files to Markdown."
+  default_prompt: "Analyze this cycling FIT file and create a Markdown training note."

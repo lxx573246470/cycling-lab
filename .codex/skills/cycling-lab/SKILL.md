@@ -21,7 +21,7 @@ Use this repository structure:
 
 ## FIT Analysis
 
-When analyzing FIT files, prefer the installed global `cycling-fit-analysis` skill. From this repository, call:
+When analyzing FIT files, prefer the project-local `skills/cycling-fit-analysis` skill. From this repository, call:
 
 ```bash
 python3 scripts/analyze_fit.py training/2026/week-21/fit/activity.fit \

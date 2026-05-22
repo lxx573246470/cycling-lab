@@ -23,6 +23,21 @@ def avg(values):
     return mean(vals) if vals else None
 
 
+def calculate_normalized_power(records, window=30):
+    values = [float(r.get("power")) for r in records if numeric(r.get("power"))]
+    if len(values) < window:
+        return None
+
+    rolling = []
+    total = sum(values[:window])
+    rolling.append(total / window)
+    for index in range(window, len(values)):
+        total += values[index] - values[index - window]
+        rolling.append(total / window)
+
+    return (mean([value**4 for value in rolling])) ** 0.25
+
+
 def fmt(value, digits=1, suffix=""):
     if value is None:
         return "无数据"
@@ -215,9 +230,14 @@ def write_note(args, messages, records):
     weight = args.weight_kg
     avg_power = session.get("avg_power") or avg(power_values)
     npower = session.get("normalized_power")
+    npower_estimated = False
+    if not numeric(npower):
+        npower = calculate_normalized_power(records)
+        npower_estimated = npower is not None
     avg_hr = session.get("avg_heart_rate") or avg(hr_values)
     max_seen_hr = session.get("max_heart_rate") or (max(hr_values) if hr_values else None)
     avg_cad = session.get("avg_cadence") or avg(cadence_values)
+    np_label = "NP（估算）" if npower_estimated else "NP"
 
     lines = [
         "---",
@@ -244,7 +264,7 @@ def write_note(args, messages, records):
         "## 核心指标",
         "",
         f"- 平均心率：{fmt(avg_hr, 0, ' bpm')}；最高心率：{fmt(max_seen_hr, 0, ' bpm')}",
-        f"- 平均功率：{fmt(avg_power, 0, ' W')}；NP：{fmt(npower, 0, ' W')}；最高功率：{fmt(session.get('max_power') or (max(power_values) if power_values else None), 0, ' W')}",
+        f"- 平均功率：{fmt(avg_power, 0, ' W')}；{np_label}：{fmt(npower, 0, ' W')}；最高功率：{fmt(session.get('max_power') or (max(power_values) if power_values else None), 0, ' W')}",
         f"- 平均踏频：{fmt(avg_cad, 0, ' rpm')}；最高踏频：{fmt(session.get('max_cadence') or (max(cadence_values) if cadence_values else None), 0, ' rpm')}",
     ]
     if weight and avg_power:
@@ -320,6 +340,7 @@ def write_note(args, messages, records):
         "max_hr": max_seen_hr,
         "avg_power": avg_power,
         "normalized_power": npower,
+        "normalized_power_estimated": npower_estimated,
         "drift_pct": drift,
     }
 

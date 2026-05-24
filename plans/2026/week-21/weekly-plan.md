@@ -23,7 +23,7 @@ tags:
 | 周四 | [轻量甜区训练](2026-05-21-light-sweet-spot.md) | 稳态功率能力，控制疲劳 | `training/2026/week-21/notes/` | ZWO: [2026-05-21-light-sweet-spot.zwo](../../../workouts/zwo/2026-05-21-light-sweet-spot.zwo) |
 | 周五 | [休息日](../../library/recovery/rest-day.md) | 恢复 |  |  |
 | 周六 | [2026-05-23 周六户外 Z2 路骑](2026-05-23-outdoor-z2-road-ride.md) | 延长有氧时间，控制强度和补给 | `training/2026/week-21/notes/` | 路骑，避免冲坡 |
-| 周日 | [FTP 测试准备](../../library/testing/ftp-test-prep.md) | 校准状态或准备测试 | `training/2026/week-21/notes/` | 可按疲劳调整 |
+| 周日 | [2026-05-24 周日恢复骑](2026-05-24-recovery-ride.md) | 恢复、吸收本周负荷 | `training/2026/week-21/notes/` | 取消 FTP 测试准备，按疲劳程度可改完全休息 |
 
 ## 关键训练
 

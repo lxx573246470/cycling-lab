@@ -73,13 +73,16 @@ Support two plan types:
 
 ### Zwift / Indoor Power Workouts
 
-Use for weekday structured training or any request for precise power control.
+Use for weekday structured training, any indoor-trainer plan, any Zwift plan, or any request for precise power control.
 
 - Create or reuse a Markdown workout plan under `plans/library/` or `plans/YYYY/week-NN/`.
-- Create a matching `.zwo` file under `workouts/zwo/` when the workout should be imported into Zwift.
+- For every indoor-trainer, indoor cycling, power-based, or Zwift workout plan, create a matching `.zwo` file under `workouts/zwo/`.
+- Add `workout_file: "../../../workouts/zwo/<filename>.zwo"` to the daily plan frontmatter when the plan is under `plans/YYYY/week-NN/`.
+- Include a `## Zwift 文件` section in the Markdown plan with the ZWO link, FTP reference value, and total duration.
 - Prescribe intervals by FTP percentage and duration; include cadence targets only when useful.
 - Include warmup, main set, cooldown, target purpose, adjustment rules, and expected RPE/heart-rate response.
 - Keep weekly-plan entries concise and link to the detailed plan plus the ZWO file.
+- If the user says "室内", "骑行台", "Zwift", "zwo", or "智能骑行台", treat the plan as a Zwift/Indoor Power Workout unless they explicitly say not to create a ZWO file.
 
 ### Weekend Outdoor Road Rides
 

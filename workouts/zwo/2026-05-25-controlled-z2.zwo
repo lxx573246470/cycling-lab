@@ -1,0 +1,17 @@
+<workout_file>
+  <author>cycling-lab</author>
+  <name>2026-05-25 Controlled Z2</name>
+  <description>Indoor trainer controlled Z2 session after an unplanned rest day. FTP reference: 200 W. Keep heart rate mostly 122-142 bpm and avoid sustained time above 150 bpm.</description>
+  <sportType>bike</sportType>
+  <tags>
+    <tag name="endurance"/>
+    <tag name="z2"/>
+    <tag name="controlled"/>
+    <tag name="week 22"/>
+  </tags>
+  <workout>
+    <Warmup Duration="900" PowerLow="0.45" PowerHigh="0.65"/>
+    <SteadyState Duration="2700" Power="0.68"/>
+    <Cooldown Duration="600" PowerLow="0.55" PowerHigh="0.40"/>
+  </workout>
+</workout_file>

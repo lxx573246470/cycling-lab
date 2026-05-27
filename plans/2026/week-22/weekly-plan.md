@@ -21,7 +21,7 @@ tags:
 | --- | --- | --- | --- | --- |
 | 周一 2026-05-25 | [骑行台受控 Z2 有氧基础骑](2026-05-25-controlled-z2.md) | 恢复后重新进入节奏 | `training/2026/week-22/notes/` | ZWO: [2026-05-25-controlled-z2.zwo](../../../workouts/zwo/2026-05-25-controlled-z2.zwo)；昨日未练不补课 |
 | 周二 2026-05-26 | [休息日](../../library/recovery/rest-day.md) 或 [恢复骑](../../library/recovery/recovery-spin.md) | 吸收周一负荷 | `training/2026/week-22/notes/` | 疲劳低可 30-45 分钟轻松转腿 |
-| 周三 2026-05-27 | [甜区间歇](../../library/intervals/sweet-spot-intervals.md) | 稳态能力，轻量质量课 | `training/2026/week-22/notes/` | 建议 2 x 10 分钟，暂不做进阶版 |
+| 周三 2026-05-27 | [轻量甜区训练](2026-05-27-light-sweet-spot.md) | 稳态能力，轻量质量课 | `training/2026/week-22/notes/` | ZWO: [2026-05-27-light-sweet-spot.zwo](../../../workouts/zwo/2026-05-27-light-sweet-spot.zwo)；建议 2 x 10 分钟，暂不做进阶版 |
 | 周四 2026-05-28 | [Z2 有氧基础骑](../../library/endurance/z2-base-ride.md) | 低风险累积有氧 | `training/2026/week-22/notes/` | 60-75 分钟，心率优先 |
 | 周五 2026-05-29 | [休息日](../../library/recovery/rest-day.md) | 为周末长骑留恢复 |  | 不安排补课 |
 | 周六 2026-05-30 | [周末户外路骑](../../library/outdoor/weekend-road-ride.md) | 长时间 Z2、补给和配速 | `training/2026/week-22/notes/` | 2.5-3.5 小时，平路/起伏路 |

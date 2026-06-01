@@ -21,7 +21,7 @@ tags:
 
 | 日期 | 每日计划引用 | 目标 | 实际记录 | 备注 |
 | --- | --- | --- | --- | --- |
-| 周一 2026-06-01 | [恢复与 Fitting 纠正训练](2026-06-01-recovery-fitting-correctives.md) | 从 5/31 两段骑和 fitting 中恢复 |  | 今天不做质量课 |
+| 周一 2026-06-01 | [恢复与 Fitting 纠正训练](2026-06-01-recovery-fitting-correctives.md) | 从 5/31 两段骑和 fitting 中恢复 | [完成基础拉伸，面拉未做，臀发力弱](../../../training/2026/week-23/notes/2026-06-01-recovery-correctives-summary.md) | 今天不做质量课 |
 | 周二 2026-06-02 | [新车设适应 Z2](2026-06-02-controlled-z2-fit-adaptation.md) | 60 分钟受控 Z2，检查膝/髋/肩颈 |  | ZWO: [2026-06-02-controlled-z2-fit-adaptation.zwo](../../../workouts/zwo/2026-06-02-controlled-z2-fit-adaptation.zwo) |
 | 周三 2026-06-03 | [Fitting 后身体纠正训练](../../library/strength/fitting-correctives.md) 或休息 | 髋、后链、肩胛稳定 |  | 做 A 版 20 分钟；疲劳高则休息 |
 | 周四 2026-06-04 | [轻量节奏/甜区适应课](2026-06-04-light-tempo-sweet-spot.md) | 2 x 8 分钟稳态刺激 |  | ZWO: [2026-06-04-light-tempo-sweet-spot.zwo](../../../workouts/zwo/2026-06-04-light-tempo-sweet-spot.zwo) |

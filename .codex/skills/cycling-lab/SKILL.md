@@ -67,7 +67,20 @@ When creating or editing daily/weekly plans:
 
 ## Plan Generation
 
-Before generating plans, read `profile/rider-profile.md`, recent `training/YYYY/week-NN/notes/`, and the latest `review/YYYY/week-NN-review.md` when available. Account for current FTP, max heart rate, recent fatigue, target event goals, available weekday time, and weekend availability.
+Before generating or changing plans, read enough recent context to make the next workout fit the current week instead of treating it as an isolated template.
+
+Minimum planning context:
+
+- `profile/rider-profile.md` for current FTP, max heart rate, goals, equipment, constraints, and known fit or body issues.
+- The current week plan at `plans/YYYY/week-NN/weekly-plan.md`, including both planned workouts and the `实际记录` column.
+- The specific daily plan being created or changed, if it already exists under `plans/YYYY/week-NN/`.
+- The latest 3-5 training notes from `training/YYYY/week-NN/notes/` and, when needed, the previous week notes too.
+- The latest `review/YYYY/week-NN-review.md` when available.
+- Any recent fitting, injury, fatigue, schedule, or equipment notes that are linked from the weekly plan or latest review.
+
+When planning, explicitly reconcile planned vs actual training. If the user skipped, shortened, downgraded, or substituted a recent workout, adjust the next 1-3 days rather than blindly preserving the original sequence. Account for current FTP, max heart rate, recent fatigue, heart-rate drift, cadence/power stability, target event goals, available weekday time, weekend availability, and recovery from the last few sessions.
+
+Do not "make up" missed intensity by stacking it onto the next day. If recent training shows high fatigue, weak muscle activation, unusual pain, poor sleep, overtime work, or high heart-rate response, reduce duration, intensity, or complexity and document the reason in the daily plan.
 
 Support two plan types:
 

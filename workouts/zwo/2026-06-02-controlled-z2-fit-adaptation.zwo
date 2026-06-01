@@ -1,0 +1,19 @@
+<workout_file>
+  <author>cycling-lab</author>
+  <name>2026-06-02 Controlled Z2 Fit Adaptation</name>
+  <description>Post-fitting low Z2 ride. FTP reference: 200 W. Keep heart rate mostly 122-142 bpm and watch knee, hip, shoulder and hand comfort.</description>
+  <sportType>bike</sportType>
+  <tags>
+    <tag name="endurance"/>
+    <tag name="z2"/>
+    <tag name="fitting"/>
+    <tag name="week 23"/>
+  </tags>
+  <workout>
+    <Warmup Duration="720" PowerLow="0.45" PowerHigh="0.62"/>
+    <SteadyState Duration="1080" Power="0.65"/>
+    <SteadyState Duration="300" Power="0.55"/>
+    <SteadyState Duration="1080" Power="0.68"/>
+    <Cooldown Duration="420" PowerLow="0.55" PowerHigh="0.40"/>
+  </workout>
+</workout_file>

@@ -1,0 +1,20 @@
+<workout_file>
+  <author>cycling-lab</author>
+  <name>2026-06-04 Light Tempo Sweet Spot</name>
+  <description>Light post-fitting steady-state stimulus. FTP reference: 200 W. Two short controlled blocks only; downgrade to Z2 if heart rate or fit discomfort is elevated.</description>
+  <sportType>bike</sportType>
+  <tags>
+    <tag name="tempo"/>
+    <tag name="sweet spot"/>
+    <tag name="controlled"/>
+    <tag name="week 23"/>
+  </tags>
+  <workout>
+    <Warmup Duration="900" PowerLow="0.45" PowerHigh="0.70"/>
+    <SteadyState Duration="480" Power="0.82"/>
+    <SteadyState Duration="360" Power="0.55"/>
+    <SteadyState Duration="480" Power="0.84"/>
+    <SteadyState Duration="720" Power="0.65"/>
+    <Cooldown Duration="540" PowerLow="0.55" PowerHigh="0.40"/>
+  </workout>
+</workout_file>

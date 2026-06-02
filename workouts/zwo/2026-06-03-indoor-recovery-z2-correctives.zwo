@@ -1,0 +1,20 @@
+<workout_file>
+  <author>cycling-lab</author>
+  <name>2026-06-03 Indoor Recovery Z2 Correctives</name>
+  <description>Recovery-focused indoor ride after a low-power but higher-HR aerobic session. FTP reference: 200 W. Keep cadence smooth and downgrade if HR or fit discomfort rises.</description>
+  <sportType>bike</sportType>
+  <tags>
+    <tag name="recovery"/>
+    <tag name="z2"/>
+    <tag name="controlled"/>
+    <tag name="week 23"/>
+  </tags>
+  <workout>
+    <Warmup Duration="600" PowerLow="0.45" PowerHigh="0.55"/>
+    <SteadyState Duration="720" Power="0.55"/>
+    <SteadyState Duration="240" Power="0.50"/>
+    <SteadyState Duration="720" Power="0.58"/>
+    <SteadyState Duration="480" Power="0.52"/>
+    <Cooldown Duration="360" PowerLow="0.45" PowerHigh="0.35"/>
+  </workout>
+</workout_file>

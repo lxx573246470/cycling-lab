@@ -1,0 +1,32 @@
+# Prod profile: points at the actually-deployed middleware on this server
+# (Postgres / Redis / MinIO on 172.19.38.126). Real secrets are still resolved
+# from env vars so that no credential is committed to git. The matching env
+# file on the server is /root/.cycling-lab-secrets (loaded by the deploy
+# script before launching the jar).
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://172.19.38.126:5432/cycling_lab}
+    username: ${SPRING_DATASOURCE_USERNAME:cycling_lab}
+    password: ${SPRING_DATASOURCE_PASSWORD:}      # required from env
+  data:
+    redis:
+      host: ${REDIS_HOST:172.19.38.126}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}                # required from env
+
+cyclinglab:
+  jwt:
+    # MUST be overridden in real env (>= 32 chars for HS256). The dev default
+    # in application.yml is only for local laptop runs.
+    secret: ${JWT_SECRET:}                        # required from env
+  storage:
+    minio:
+      endpoint: ${MINIO_ENDPOINT:http://172.19.38.126:9000}
+      access-key: ${MINIO_ACCESS_KEY:minioadmin}
+      secret-key: ${MINIO_SECRET_KEY:}            # required from env
+      bucket: ${MINIO_BUCKET:cycling-lab}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://8.137.52.31}

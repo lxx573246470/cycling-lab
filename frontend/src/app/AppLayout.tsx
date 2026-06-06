@@ -8,6 +8,7 @@ const navItems = [
   { to: "/library", label: "Workout Library" },
   { to: "/plans", label: "Weekly Plans" },
   { to: "/workouts", label: "Workout Files" },
+  { to: "/trainings", label: "Trainings" },
 ];
 
 export function AppLayout() {

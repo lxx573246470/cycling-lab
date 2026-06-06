@@ -8,8 +8,9 @@ public record AppProperties(Jwt jwt, Storage storage, Cors cors) {
 
     public record Jwt(String secret, long accessTokenTtlSeconds, long refreshTokenTtlSeconds, String issuer) {}
 
-    public record Storage(Minio minio) {
+    public record Storage(Minio minio, Local local) {
         public record Minio(String endpoint, String accessKey, String secretKey, String bucket) {}
+        public record Local(String root) {}
     }
 
     public record Cors(List<String> allowedOrigins) {}

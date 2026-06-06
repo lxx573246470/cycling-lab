@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import json
 import math
 import re
 import shutil
@@ -358,6 +359,7 @@ def main():
     parser.add_argument("--obsidian-dir")
     parser.add_argument("--note-title")
     parser.add_argument("--no-normalize-fit-name", action="store_true", help="Do not rename today's FIT file to yyyy-MM-dd.fit.")
+    parser.add_argument("--json-out", help="Also write a comprehensive JSON metrics file at this path (used by the Cycling Lab backend).")
     args = parser.parse_args()
 
     fit_path = Path(args.fit_file).expanduser().resolve()

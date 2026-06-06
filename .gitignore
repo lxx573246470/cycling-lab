@@ -1,8 +1,9 @@
-__pycache__/
+﻿__pycache__/
 *.pyc
 
 # Backend
 backend/target/
+backend/build/
 backend/.mvn/
 backend/mvnw
 backend/mvnw.cmd

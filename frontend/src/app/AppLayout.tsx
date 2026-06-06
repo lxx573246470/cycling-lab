@@ -7,6 +7,7 @@ const navItems = [
   { to: "/profile/zones", label: "Zones" },
   { to: "/library", label: "Workout Library" },
   { to: "/plans", label: "Weekly Plans" },
+  { to: "/workouts", label: "Workout Files" },
 ];
 
 export function AppLayout() {

@@ -5,6 +5,7 @@ import com.cyclinglab.platform.library.exception.StructureValidationException;
 import com.cyclinglab.platform.library.exception.TemplateNameConflictException;
 import com.cyclinglab.platform.library.exception.TemplateNotFoundException;
 import com.cyclinglab.platform.plan.exception.DailyPlanNotFoundException;
+import com.cyclinglab.platform.workout.exception.WorkoutFileNotFoundException;
 import com.cyclinglab.platform.plan.exception.WeeklyPlanConflictException;
 import com.cyclinglab.platform.plan.exception.WeeklyPlanNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,6 +45,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DailyPlanNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleDailyPlanNotFound(DailyPlanNotFoundException ex, HttpServletRequest req) {
+        return build(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage(), req, null);
+    }
+
+    @ExceptionHandler(WorkoutFileNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleWorkoutFileNotFound(WorkoutFileNotFoundException ex, HttpServletRequest req) {
         return build(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage(), req, null);
     }
 

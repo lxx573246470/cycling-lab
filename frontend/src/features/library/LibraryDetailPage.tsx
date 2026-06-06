@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -16,6 +16,7 @@ import {
 } from "./libraryApi";
 import { BlockEditor } from "./BlockEditor";
 import { PowerCurvePreview } from "./PowerCurvePreview";
+import { GenerateZwoPanel, WorkoutFileListSection } from "@/features/workout/GenerateZwoPanel";
 import { Card, ErrorBanner, Field, PageHeader, Spinner } from "@/components/ui";
 
 const inputCls =
@@ -228,6 +229,13 @@ function DetailForm({
           </Card>
         </div>
       </div>
+
+      <GenerateZwoPanel
+        defaultStructureJson={JSON.stringify(liveStructure)}
+        sourceTemplateId={initial.id}
+      />
+
+      <WorkoutFileListSection title="Generated from this template" refreshKey={`from-${initial.id}`} />
     </form>
   );
 }

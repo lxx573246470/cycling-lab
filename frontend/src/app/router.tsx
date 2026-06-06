@@ -11,6 +11,7 @@ import { LibraryVersionPage } from "@/features/library/LibraryVersionPage";
 import { PlanListPage } from "@/features/plan/PlanListPage";
 import { PlanNewPage } from "@/features/plan/PlanNewPage";
 import { PlanEditPage } from "@/features/plan/PlanEditPage";
+import { WorkoutsListPage } from "@/features/workout/WorkoutsListPage";
 import { AppLayout } from "@/app/AppLayout";
 import { useAuthStore } from "@/features/auth/authStore";
 
@@ -108,6 +109,12 @@ const planEditRoute = createRoute({
   component: PlanEditPage,
 });
 
+const workoutsListRoute = createRoute({
+  getParentRoute: () => protectedLayout,
+  path: "/workouts",
+  component: WorkoutsListPage,
+});
+
 protectedLayout.addChildren([
   indexRoute,
   profileRoute,
@@ -120,6 +127,7 @@ protectedLayout.addChildren([
   planListRoute,
   planNewRoute,
   planEditRoute,
+  workoutsListRoute,
 ]);
 
 const routeTree = rootRoute.addChildren([loginRoute, protectedLayout]);

@@ -1,6 +1,12 @@
 package com.cyclinglab.platform.common;
 
 import com.cyclinglab.platform.auth.AuthException;
+import com.cyclinglab.platform.library.exception.StructureValidationException;
+import com.cyclinglab.platform.library.exception.TemplateNameConflictException;
+import com.cyclinglab.platform.library.exception.TemplateNotFoundException;
+import com.cyclinglab.platform.plan.exception.DailyPlanNotFoundException;
+import com.cyclinglab.platform.plan.exception.WeeklyPlanConflictException;
+import com.cyclinglab.platform.plan.exception.WeeklyPlanNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.List;
@@ -24,6 +30,46 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthException.class)
     public ResponseEntity<ErrorResponse> handleAuth(AuthException ex, HttpServletRequest req) {
         return build(HttpStatus.UNAUTHORIZED, "AUTH_FAILED", ex.getMessage(), req, null);
+    }
+
+    @ExceptionHandler(TemplateNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleTemplateNotFound(TemplateNotFoundException ex, HttpServletRequest req) {
+        return build(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage(), req, null);
+    }
+
+    @ExceptionHandler(WeeklyPlanNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleWeeklyPlanNotFound(WeeklyPlanNotFoundException ex, HttpServletRequest req) {
+        return build(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage(), req, null);
+    }
+
+    @ExceptionHandler(DailyPlanNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDailyPlanNotFound(DailyPlanNotFoundException ex, HttpServletRequest req) {
+        return build(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage(), req, null);
+    }
+
+    @ExceptionHandler(StructureValidationException.class)
+    public ResponseEntity<ErrorResponse> handleStructure(StructureValidationException ex, HttpServletRequest req) {
+        List<Map<String, String>> details = ex.getDetails().stream()
+            .map(d -> Map.of("pointer", d.pointer(), "message", d.message()))
+            .toList();
+        return build(HttpStatus.UNPROCESSABLE_ENTITY, "UNPROCESSABLE_STRUCTURE", ex.getMessage(), req, details);
+    }
+
+    @ExceptionHandler(TemplateNameConflictException.class)
+    public ResponseEntity<ErrorResponse> handleNameConflict(TemplateNameConflictException ex, HttpServletRequest req) {
+        List<Map<String, Object>> details = List.of(
+            Map.of("field", "name", "message", ex.getMessage(), "conflictWith", ex.getConflict().conflictWith().toString())
+        );
+        return build(HttpStatus.CONFLICT, "DUPLICATE_NAME", ex.getMessage(), req, details);
+    }
+
+    @ExceptionHandler(WeeklyPlanConflictException.class)
+    public ResponseEntity<ErrorResponse> handleWeeklyPlanConflict(WeeklyPlanConflictException ex, HttpServletRequest req) {
+        List<Map<String, Object>> details = List.of(
+            Map.of("field", "isoYear+isoWeek", "message", ex.getMessage(),
+                   "conflictWith", ex.getConflict().conflictWith().toString())
+        );
+        return build(HttpStatus.CONFLICT, "WEEK_PLAN_EXISTS", ex.getMessage(), req, details);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -1,5 +1,6 @@
 package com.cyclinglab.platform.auth;
 
+import com.cyclinglab.platform.tenant.TenantContext;
 import com.cyclinglab.platform.user.UserEntity;
 import com.cyclinglab.platform.user.UserRepository;
 import com.cyclinglab.platform.user.UserStatus;
@@ -58,6 +59,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     );
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    TenantContext.setCurrentUserId(user.getId());
                 }
             }
         } catch (Exception ex) {

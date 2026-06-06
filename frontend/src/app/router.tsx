@@ -12,6 +12,9 @@ import { PlanListPage } from "@/features/plan/PlanListPage";
 import { PlanNewPage } from "@/features/plan/PlanNewPage";
 import { PlanEditPage } from "@/features/plan/PlanEditPage";
 import { WorkoutsListPage } from "@/features/workout/WorkoutsListPage";
+import { ReviewsListPage } from "@/features/review/ReviewsListPage";
+import { ReviewDetailPage } from "@/features/review/ReviewDetailPage";
+import { ReviewNewPage } from "@/features/review/ReviewNewPage";
 import { TrainingsListPage } from "@/features/training/TrainingsListPage";
 import { TrainingDetailPage } from "@/features/training/TrainingDetailPage";
 import { AppLayout } from "@/app/AppLayout";
@@ -123,6 +126,24 @@ const trainingsListRoute = createRoute({
   component: TrainingsListPage,
 });
 
+const reviewsListRoute = createRoute({
+  getParentRoute: () => protectedLayout,
+  path: "/reviews",
+  component: ReviewsListPage,
+});
+
+const reviewNewRoute = createRoute({
+  getParentRoute: () => protectedLayout,
+  path: "/reviews/new",
+  component: ReviewNewPage,
+});
+
+const reviewDetailRoute = createRoute({
+  getParentRoute: () => protectedLayout,
+  path: "/reviews/$id",
+  component: ReviewDetailPage,
+});
+
 const trainingDetailRoute = createRoute({
   getParentRoute: () => protectedLayout,
   path: "/trainings/$id",
@@ -144,6 +165,9 @@ protectedLayout.addChildren([
   workoutsListRoute,
   trainingsListRoute,
   trainingDetailRoute,
+  reviewsListRoute,
+  reviewNewRoute,
+  reviewDetailRoute,
 ]);
 
 const routeTree = rootRoute.addChildren([loginRoute, protectedLayout]);

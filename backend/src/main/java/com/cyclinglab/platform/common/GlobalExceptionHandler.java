@@ -9,6 +9,8 @@ import com.cyclinglab.platform.workout.exception.WorkoutFileNotFoundException;
 import com.cyclinglab.platform.plan.exception.WeeklyPlanConflictException;
 import com.cyclinglab.platform.plan.exception.WeeklyPlanNotFoundException;
 import com.cyclinglab.platform.training.exception.TrainingFileNotFoundException;
+import com.cyclinglab.platform.review.exception.ReviewConflictException;
+import com.cyclinglab.platform.review.exception.ReviewNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.List;
@@ -57,6 +59,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TrainingFileNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleTrainingFileNotFound(TrainingFileNotFoundException ex, HttpServletRequest req) {
         return build(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage(), req, null);
+    }
+
+    @ExceptionHandler(ReviewNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleReviewNotFound(ReviewNotFoundException ex, HttpServletRequest req) {
+        return build(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage(), req, null);
+    }
+
+    @ExceptionHandler(ReviewConflictException.class)
+    public ResponseEntity<ErrorResponse> handleReviewConflict(ReviewConflictException ex, HttpServletRequest req) {
+        return build(HttpStatus.CONFLICT, "REVIEW_EXISTS", ex.getMessage(), req, null);
     }
 
     @ExceptionHandler(StructureValidationException.class)

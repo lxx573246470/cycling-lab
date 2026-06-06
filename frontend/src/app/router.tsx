@@ -15,6 +15,7 @@ import { WorkoutsListPage } from "@/features/workout/WorkoutsListPage";
 import { ReviewsListPage } from "@/features/review/ReviewsListPage";
 import { ReviewDetailPage } from "@/features/review/ReviewDetailPage";
 import { ReviewNewPage } from "@/features/review/ReviewNewPage";
+import { AdminUsersPage } from "@/features/admin/AdminUsersPage";
 import { TrainingsListPage } from "@/features/training/TrainingsListPage";
 import { TrainingDetailPage } from "@/features/training/TrainingDetailPage";
 import { AppLayout } from "@/app/AppLayout";
@@ -144,6 +145,12 @@ const reviewDetailRoute = createRoute({
   component: ReviewDetailPage,
 });
 
+const adminUsersRoute = createRoute({
+  getParentRoute: () => protectedLayout,
+  path: "/admin/users",
+  component: AdminUsersPage,
+});
+
 const trainingDetailRoute = createRoute({
   getParentRoute: () => protectedLayout,
   path: "/trainings/$id",
@@ -168,6 +175,7 @@ protectedLayout.addChildren([
   reviewsListRoute,
   reviewNewRoute,
   reviewDetailRoute,
+  adminUsersRoute,
 ]);
 
 const routeTree = rootRoute.addChildren([loginRoute, protectedLayout]);

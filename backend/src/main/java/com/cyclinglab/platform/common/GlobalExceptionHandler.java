@@ -11,6 +11,7 @@ import com.cyclinglab.platform.plan.exception.WeeklyPlanNotFoundException;
 import com.cyclinglab.platform.training.exception.TrainingFileNotFoundException;
 import com.cyclinglab.platform.review.exception.ReviewConflictException;
 import com.cyclinglab.platform.review.exception.ReviewNotFoundException;
+import com.cyclinglab.platform.admin.exception.AdminUserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.List;
@@ -58,6 +59,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(TrainingFileNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleTrainingFileNotFound(TrainingFileNotFoundException ex, HttpServletRequest req) {
+        return build(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage(), req, null);
+    }
+
+    @ExceptionHandler(AdminUserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleAdminUserNotFound(AdminUserNotFoundException ex, HttpServletRequest req) {
         return build(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage(), req, null);
     }
 

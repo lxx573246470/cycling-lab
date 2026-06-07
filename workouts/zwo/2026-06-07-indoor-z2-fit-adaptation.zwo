@@ -1,0 +1,24 @@
+﻿<workout_file>
+  <author>cycling-lab</author>
+  <name>2026-06-07 Indoor Z2 Fit Adaptation</name>
+  <description>Rain-day indoor replacement for the originally planned 2.0-2.5h outdoor Z2 fit-adaptation ride. Four Z2 blocks separated by short easy-spin recoveries to substitute for outdoor descents and coasting. FTP reference: 200 W. Target 62-67% FTP, HR 122-142 bpm, cadence 85-92 rpm. Downgrade if HR exceeds 145 bpm or fit discomfort rises.</description>
+  <sportType>bike</sportType>
+  <tags>
+    <tag name="endurance"/>
+    <tag name="z2"/>
+    <tag name="fitting"/>
+    <tag name="indoor"/>
+    <tag name="week 23"/>
+  </tags>
+  <workout>
+    <Warmup Duration="600" PowerLow="0.45" PowerHigh="0.62"/>
+    <SteadyState Duration="1080" Power="0.62"/>
+    <SteadyState Duration="180" Power="0.55"/>
+    <SteadyState Duration="1320" Power="0.65"/>
+    <SteadyState Duration="180" Power="0.55"/>
+    <SteadyState Duration="1320" Power="0.65"/>
+    <SteadyState Duration="180" Power="0.55"/>
+    <SteadyState Duration="1080" Power="0.62"/>
+    <Cooldown Duration="360" PowerLow="0.50" PowerHigh="0.40"/>
+  </workout>
+</workout_file>

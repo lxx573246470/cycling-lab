@@ -1,0 +1,21 @@
+﻿<workout_file>
+  <author>cycling-lab</author>
+  <name>2026-06-06 Easy Z2 Recovery Ride</name>
+  <description>Easy indoor Z2 the day after a rest day and one day before a long outdoor fit-adaptation ride. FTP reference: 200 W. Keep heart rate in 122-142 bpm, cadence 85-92 rpm, and downgrade if HR or fit discomfort rises.</description>
+  <sportType>bike</sportType>
+  <tags>
+    <tag name="endurance"/>
+    <tag name="z2"/>
+    <tag name="recovery"/>
+    <tag name="week 23"/>
+  </tags>
+  <workout>
+    <Warmup Duration="480" PowerLow="0.45" PowerHigh="0.62"/>
+    <SteadyState Duration="720" Power="0.62"/>
+    <SteadyState Duration="240" Power="0.55"/>
+    <SteadyState Duration="1080" Power="0.65"/>
+    <SteadyState Duration="300" Power="0.55"/>
+    <SteadyState Duration="300" Power="0.52"/>
+    <Cooldown Duration="180" PowerLow="0.45" PowerHigh="0.40"/>
+  </workout>
+</workout_file>

@@ -1,0 +1,15 @@
+<workout_file>
+  <author>cycling-lab</author>
+  <name>2026-06-14 Recovery Spin</name>
+  <description>Easy recovery spin after the weekend outdoor ride. FTP reference: 200 W. Cancel if fatigue or joint discomfort is present.</description>
+  <sportType>bike</sportType>
+  <tags>
+    <tag name="recovery"/>
+    <tag name="week 24"/>
+  </tags>
+  <workout>
+    <SteadyState Duration="1800" Power="0.45"/>
+    <Cooldown Duration="600" PowerLow="0.45" PowerHigh="0.35"/>
+  </workout>
+</workout_file>
+

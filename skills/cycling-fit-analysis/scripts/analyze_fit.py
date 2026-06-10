@@ -95,6 +95,307 @@ def time_at(records, start_index):
     return f"{seconds // 60}:{seconds % 60:02d}"
 
 
+def elapsed_seconds(record, first_timestamp):
+    timestamp = record.get("timestamp")
+    if first_timestamp and timestamp:
+        return max(0, (timestamp - first_timestamp).total_seconds())
+    return 0
+
+
+def split_markdown_row(line):
+    text = line.strip()
+    if not text.startswith("|") or not text.endswith("|"):
+        return []
+    return [cell.strip() for cell in text.strip("|").split("|")]
+
+
+def is_markdown_separator(cells):
+    return bool(cells) and all(re.fullmatch(r":?-{3,}:?", cell.strip()) for cell in cells)
+
+
+def parse_duration_seconds(text):
+    if not text:
+        return None
+    normalized = str(text).replace("×", "x").replace("－", "-").replace("—", "-")
+    total = 0.0
+    matched = False
+
+    repeated = re.compile(r"(\d+(?:\.\d+)?)\s*x\s*(\d+(?:\.\d+)?)\s*(秒|sec|secs|second|seconds|分钟|分|min|mins|minute|minutes)", re.IGNORECASE)
+    for match in repeated.finditer(normalized):
+        count = float(match.group(1))
+        value = float(match.group(2))
+        unit = match.group(3).lower()
+        total += count * value * (1 if unit in {"秒", "sec", "secs", "second", "seconds"} else 60)
+        matched = True
+    normalized = repeated.sub(" ", normalized)
+
+    single = re.compile(r"(\d+(?:\.\d+)?)(?:\s*(?:-|到|至|~)\s*(\d+(?:\.\d+)?))?\s*(秒|sec|secs|second|seconds|分钟|分|min|mins|minute|minutes)", re.IGNORECASE)
+    for match in single.finditer(normalized):
+        value = float(match.group(2) or match.group(1))
+        unit = match.group(3).lower()
+        total += value * (1 if unit in {"秒", "sec", "secs", "second", "seconds"} else 60)
+        matched = True
+
+    return int(round(total)) if matched and total > 0 else None
+
+
+def parse_power_target(text, ftp):
+    if not text:
+        return None
+    normalized = str(text).replace("－", "-").replace("—", "-")
+    ranges = []
+    percent_pattern = re.compile(r"(\d+(?:\.\d+)?)(?:\s*(?:-|到|至|~)\s*(\d+(?:\.\d+)?))?\s*%\s*(?:FTP)?", re.IGNORECASE)
+    for match in percent_pattern.finditer(normalized):
+        low = float(match.group(1))
+        high = float(match.group(2) or match.group(1))
+        if ftp:
+            ranges.append((min(low, high) / 100 * ftp, max(low, high) / 100 * ftp))
+    watt_pattern = re.compile(r"(\d+(?:\.\d+)?)(?:\s*(?:-|到|至|~)\s*(\d+(?:\.\d+)?))?\s*W\b", re.IGNORECASE)
+    for match in watt_pattern.finditer(normalized):
+        low = float(match.group(1))
+        high = float(match.group(2) or match.group(1))
+        ranges.append((min(low, high), max(low, high)))
+    if not ranges:
+        return None
+    return min(low for low, _ in ranges), max(high for _, high in ranges)
+
+
+def find_plan_file(start):
+    if not hasattr(start, "strftime"):
+        return None
+    project_root = Path(__file__).resolve().parents[3]
+    date_text = start.strftime("%Y-%m-%d")
+    week = start.isocalendar().week
+    candidates = sorted((project_root / "plans" / str(start.year) / f"week-{week}").glob(f"{date_text}*.md"))
+    candidates = [path for path in candidates if "weekly-plan" not in path.name]
+    if candidates:
+        return candidates[0]
+
+    candidates = sorted((project_root / "plans").glob(f"**/{date_text}*.md"))
+    candidates = [path for path in candidates if "weekly-plan" not in path.name]
+    return candidates[0] if candidates else None
+
+
+def parse_plan_segments(path):
+    if not path:
+        return []
+    plan_path = Path(path).expanduser().resolve()
+    if not plan_path.exists():
+        return []
+    lines = plan_path.read_text(encoding="utf-8").splitlines()
+    for index, line in enumerate(lines):
+        headers = split_markdown_row(line)
+        if not headers or not any("阶段" in header for header in headers) or not any("时间" in header for header in headers):
+            continue
+        if index + 1 >= len(lines) or not is_markdown_separator(split_markdown_row(lines[index + 1])):
+            continue
+
+        stage_i = next(i for i, header in enumerate(headers) if "阶段" in header)
+        time_i = next(i for i, header in enumerate(headers) if "时间" in header)
+        intensity_i = next((i for i, header in enumerate(headers) if "强度" in header or "功率" in header or "Zwift" in header), None)
+        note_i = next((i for i, header in enumerate(headers) if "执行" in header or "说明" in header or "目标" in header), None)
+
+        segments = []
+        start_s = 0
+        for row_line in lines[index + 2 :]:
+            cells = split_markdown_row(row_line)
+            if not cells or is_markdown_separator(cells):
+                break
+            if max(stage_i, time_i) >= len(cells):
+                continue
+            duration = parse_duration_seconds(cells[time_i])
+            if not duration:
+                continue
+            intensity = cells[intensity_i] if intensity_i is not None and intensity_i < len(cells) else ""
+            note = cells[note_i] if note_i is not None and note_i < len(cells) else ""
+            segments.append(
+                {
+                    "name": cells[stage_i],
+                    "duration_s": duration,
+                    "start_s": start_s,
+                    "end_s": start_s + duration,
+                    "intensity": intensity,
+                    "note": note,
+                }
+            )
+            start_s += duration
+        if segments:
+            return segments
+    return []
+
+
+def extract_plan_goal(path):
+    if not path:
+        return None
+    plan_path = Path(path).expanduser().resolve()
+    if not plan_path.exists():
+        return None
+    lines = plan_path.read_text(encoding="utf-8").splitlines()
+    in_goal = False
+    goal_lines = []
+    for line in lines:
+        stripped = line.strip()
+        if re.fullmatch(r"##\s+(目标|Ride Objective|Objective).*", stripped, flags=re.IGNORECASE):
+            in_goal = True
+            continue
+        if in_goal and stripped.startswith("## "):
+            break
+        if in_goal and stripped and not stripped.startswith("|"):
+            goal_lines.append(stripped.lstrip("- ").strip())
+    if not goal_lines:
+        return None
+    return " ".join(goal_lines[:3])
+
+
+def records_between(records, start_s, end_s):
+    if not records:
+        return []
+    first = records[0].get("timestamp")
+    return [record for record in records if start_s <= elapsed_seconds(record, first) < end_s]
+
+
+def evaluate_segment(avg_power_value, target_range):
+    if avg_power_value is None or not target_range:
+        return "只看趋势"
+    low, high = target_range
+    tolerance = max(3, (high - low) * 0.1)
+    if avg_power_value < low - tolerance:
+        return "低于计划"
+    if avg_power_value > high + tolerance:
+        return "高于计划"
+    return "贴近计划"
+
+
+def planned_segment_rows(records, plan_segments, ftp):
+    rows = []
+    for segment in plan_segments:
+        chunk = records_between(records, segment["start_s"], segment["end_s"])
+        target_range = parse_power_target(" ".join([segment.get("intensity", ""), segment.get("note", "")]), ftp)
+        p = avg([r.get("power") for r in chunk])
+        hr = avg([r.get("heart_rate") for r in chunk])
+        cad = avg([r.get("cadence") for r in chunk])
+        rows.append(
+            {
+                "name": segment["name"],
+                "time": f"{segment['start_s'] // 60:02d}-{math.ceil(segment['end_s'] / 60):02d} min",
+                "planned": segment.get("intensity") or segment.get("note") or "未写明",
+                "duration_min": len(chunk) / 60 if chunk else 0,
+                "power": p,
+                "heart_rate": hr,
+                "cadence": cad,
+                "drift": decoupling(chunk),
+                "verdict": evaluate_segment(p, target_range),
+            }
+        )
+    return rows
+
+
+def clamp(value, low=0, high=10):
+    return max(low, min(high, value))
+
+
+def score_from_drift(drift):
+    if drift is None:
+        return 6.0, "心率漂移数据不足"
+    absolute = abs(drift)
+    if absolute < 5:
+        return 9.0, f"心率漂移 {fmt(drift, 1, '%')}，稳定"
+    if absolute < 7:
+        return 8.0, f"心率漂移 {fmt(drift, 1, '%')}，可接受"
+    if absolute < 10:
+        return 6.5, f"心率漂移 {fmt(drift, 1, '%')}，略偏高"
+    if absolute < 15:
+        return 5.0, f"心率漂移 {fmt(drift, 1, '%')}，偏高"
+    return 4.0, f"心率漂移 {fmt(drift, 1, '%')}，明显偏高"
+
+
+def score_from_cadence(cadence_values):
+    moving = [value for value in cadence_values if numeric(value) and value >= 1]
+    if not moving:
+        return 6.0, "踏频数据不足"
+    stable_pct = sum(1 for value in moving if 85 <= value <= 100) / len(moving) * 100
+    if stable_pct >= 70:
+        score = 9.0
+    elif stable_pct >= 55:
+        score = 8.0
+    elif stable_pct >= 40:
+        score = 7.0
+    elif stable_pct >= 25:
+        score = 6.0
+    else:
+        score = 5.0
+    return score, f"85-100 rpm 踏频占移动时间 {stable_pct:.1f}%"
+
+
+def score_from_completion(minutes, plan_segments):
+    if not minutes or not plan_segments:
+        return 6.0, "缺少计划时长，完成度按中性处理"
+    planned_minutes = sum(segment["duration_s"] for segment in plan_segments) / 60
+    if planned_minutes <= 0:
+        return 6.0, "计划时长无效"
+    ratio = minutes / planned_minutes
+    if ratio < 1:
+        score = 10 * ratio
+    elif ratio <= 1.1:
+        score = 10
+    else:
+        score = 10 - min(3, (ratio - 1.1) * 10)
+    return clamp(score), f"实际 {fmt(minutes, 1, ' 分钟')} / 计划 {fmt(planned_minutes, 1, ' 分钟')}"
+
+
+def score_from_segments(segment_metrics):
+    if not segment_metrics:
+        return 6.0, "没有计划分段，无法评价分段贴合度"
+    values = []
+    weights = []
+    for row in segment_metrics:
+        verdict = row["verdict"]
+        if verdict == "贴近计划":
+            score = 9.0
+        elif verdict in {"低于计划", "高于计划"}:
+            score = 6.0
+        else:
+            score = 7.0
+        values.append(score)
+        weights.append(max(row["duration_min"], 0.5))
+    weighted = sum(value * weight for value, weight in zip(values, weights)) / sum(weights)
+    close = sum(1 for row in segment_metrics if row["verdict"] == "贴近计划")
+    off = sum(1 for row in segment_metrics if row["verdict"] in {"低于计划", "高于计划"})
+    return weighted, f"{close} 个阶段贴近计划，{off} 个阶段偏离功率目标"
+
+
+def training_goal_score(minutes, plan_segments, segment_metrics, drift, cadence_values, plan_goal):
+    completion_score, completion_note = score_from_completion(minutes, plan_segments)
+    segment_score, segment_note = score_from_segments(segment_metrics)
+    drift_score, drift_note = score_from_drift(drift)
+    cadence_score, cadence_note = score_from_cadence(cadence_values)
+
+    if plan_segments:
+        score = completion_score * 0.25 + segment_score * 0.35 + drift_score * 0.25 + cadence_score * 0.15
+    else:
+        score = segment_score * 0.20 + drift_score * 0.45 + cadence_score * 0.35
+    score = round(clamp(score), 1)
+
+    if score >= 8.5:
+        label = "高度达成"
+    elif score >= 7:
+        label = "基本达成"
+    elif score >= 6:
+        label = "部分达成"
+    else:
+        label = "偏离计划"
+
+    notes = [
+        f"完成度：{completion_note}",
+        f"分段执行：{segment_note}",
+        f"心率控制：{drift_note}",
+        f"踏频稳定：{cadence_note}",
+    ]
+    if plan_goal:
+        notes.insert(0, f"计划目标：{plan_goal}")
+    return {"score": score, "label": label, "notes": notes}
+
+
 def parse_fit(path):
     fit = FitFile(str(path))
     messages = defaultdict(list)
@@ -205,6 +506,9 @@ def write_note(args, messages, records):
     created = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     date_text = start.strftime("%Y-%m-%d") if hasattr(start, "strftime") else "unknown-date"
     title = args.note_title or f"{date_text} 室内骑行训练分析"
+    plan_path = Path(args.plan_file).expanduser().resolve() if args.plan_file else find_plan_file(start)
+    plan_segments = parse_plan_segments(plan_path)
+    plan_goal = extract_plan_goal(plan_path) if plan_segments else None
 
     hr_values = [r.get("heart_rate") for r in records if numeric(r.get("heart_rate"))]
     power_values = [r.get("power") for r in records if numeric(r.get("power"))]
@@ -239,6 +543,8 @@ def write_note(args, messages, records):
     max_seen_hr = session.get("max_heart_rate") or (max(hr_values) if hr_values else None)
     avg_cad = session.get("avg_cadence") or avg(cadence_values)
     np_label = "NP（估算）" if npower_estimated else "NP"
+    segment_metrics = planned_segment_rows(records, plan_segments, args.ftp) if plan_segments else []
+    goal_score = training_goal_score(minutes, plan_segments, segment_metrics, drift, cadence_values, plan_goal)
 
     lines = [
         "---",
@@ -268,6 +574,10 @@ def write_note(args, messages, records):
         f"- 平均功率：{fmt(avg_power, 0, ' W')}；{np_label}：{fmt(npower, 0, ' W')}；最高功率：{fmt(session.get('max_power') or (max(power_values) if power_values else None), 0, ' W')}",
         f"- 平均踏频：{fmt(avg_cad, 0, ' rpm')}；最高踏频：{fmt(session.get('max_cadence') or (max(cadence_values) if cadence_values else None), 0, ' rpm')}",
     ]
+    if plan_path and plan_segments:
+        lines.insert(lines.index("## 核心指标") - 1, f"- 对照计划：{plan_path}")
+    elif args.plan_file:
+        lines.insert(lines.index("## 核心指标") - 1, f"- 对照计划：{args.plan_file}（未解析到包含“阶段/时间”的计划表）")
     if weight and avg_power:
         lines.append(f"- 平均功率体重比：{fmt(avg_power / weight, 2, ' W/kg')}")
     if weight and npower:
@@ -285,6 +595,15 @@ def write_note(args, messages, records):
     lines += [
         "- 室内骑行若速度/距离为 0 属正常记录现象，本分析优先使用心率、功率和踏频。",
         "",
+        "## 训练目标匹配评分",
+        "",
+        f"- 评分：**{fmt(goal_score['score'], 1, '/10')}**（{goal_score['label']}）",
+    ]
+    lines.extend([f"- {note}" for note in goal_score["notes"]])
+    if not plan_segments:
+        lines.append("- 未找到可解析的每日计划分段，评分主要依据整场心率漂移和踏频稳定性，可信度低于计划内训练。")
+    lines += [
+        "",
         "## 心率区间",
         "",
         "| 区间 | 时间点数 | 占比 |",
@@ -300,6 +619,26 @@ def write_note(args, messages, records):
 
     lines += ["", "## 踏频分布", "", "| 区间 | 时间点数 | 占比 |", "|---|---:|---:|"]
     lines.extend([f"| {name} | {count} | {pct:.1f}% |" for name, count, pct in cadence_rows])
+
+    if plan_segments:
+        lines += [
+            "",
+            "## 计划分段执行分析",
+            "",
+            "| 计划阶段 | 时间窗 | 计划强度 | 实际时长 | 平均功率 | 平均心率 | 平均踏频 | 段内心率漂移 | 执行判断 |",
+            "|---|---:|---|---:|---:|---:|---:|---:|---|",
+        ]
+        for row in segment_metrics:
+            lines.append(
+                f"| {row['name']} | {row['time']} | {row['planned']} | {fmt(row['duration_min'], 1, ' 分钟')} | "
+                f"{fmt(row['power'], 1, ' W')} | {fmt(row['heart_rate'], 1, ' bpm')} | {fmt(row['cadence'], 1, ' rpm')} | "
+                f"{fmt(row['drift'], 1, '%')} | {row['verdict']} |"
+            )
+        planned_duration = sum(segment["duration_s"] for segment in plan_segments) / 60
+        if minutes and minutes < planned_duration - 2:
+            lines += ["", f"- 实际记录比计划分段总时长少约 {fmt(planned_duration - minutes, 1, ' 分钟')}，后续阶段可能没有完整执行。"]
+        elif minutes and minutes > planned_duration + 2:
+            lines += ["", f"- 实际记录比计划分段总时长多约 {fmt(minutes - planned_duration, 1, ' 分钟')}，计划外时间需结合体感判断是否属于额外热身、收尾或自由骑。"]
 
     lines += ["", "## 10 分钟分段", "", "| 分段 | 平均功率 | 平均心率 | 平均踏频 |", "|---|---:|---:|---:|"]
     for label, p, hr, cad in segment_rows(records):
@@ -343,6 +682,9 @@ def write_note(args, messages, records):
         "normalized_power": npower,
         "normalized_power_estimated": npower_estimated,
         "drift_pct": drift,
+        "plan_file": str(plan_path) if plan_path and plan_segments else None,
+        "plan_segments": len(plan_segments),
+        "goal_score": goal_score["score"],
     }
 
 
@@ -358,6 +700,7 @@ def main():
     parser.add_argument("--out-dir", default=".")
     parser.add_argument("--obsidian-dir")
     parser.add_argument("--note-title")
+    parser.add_argument("--plan-file", help="Markdown daily plan for planned-stage segment analysis. If omitted, auto-detects plans/YYYY/week-NN/YYYY-MM-DD*.md when available.")
     parser.add_argument("--no-normalize-fit-name", action="store_true", help="Do not rename today's FIT file to yyyy-MM-dd.fit.")
     parser.add_argument("--json-out", help="Also write a comprehensive JSON metrics file at this path (used by the Cycling Lab backend).")
     args = parser.parse_args()
@@ -381,7 +724,9 @@ def main():
         f"{fmt(summary['duration_min'], 1, ' min')}; "
         f"avg HR {fmt(summary['avg_hr'], 0, ' bpm')}; "
         f"avg power {fmt(summary['avg_power'], 0, ' W')}; "
-        f"drift {fmt(summary['drift_pct'], 1, '%')}"
+        f"drift {fmt(summary['drift_pct'], 1, '%')}; "
+        f"plan segments {summary['plan_segments']}; "
+        f"score {fmt(summary['goal_score'], 1, '/10')}"
     )
 
 

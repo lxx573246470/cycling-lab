@@ -39,7 +39,7 @@ For uploaded FIT files:
 - Store the raw file under `training/YYYY/week-NN/fit/` using a stable date-based filename if the upload name is unclear.
 - Write generated notes to `training/YYYY/week-NN/notes/`.
 - Pass known profile values from `profile/rider-profile.md` to the analyzer: age, height, weight, max heart rate, FTP, and athlete name.
-- After generating the note, summarize the ride in chat with the note path, primary intensity, heart-rate drift, cadence/power stability, and the next training implication.
+- After generating the note, summarize the ride in chat with the note path, the 10-point training-goal match score, primary intensity, plan-stage execution, heart-rate drift, cadence/power stability, and the next training implication.
 - If screenshots are provided with the FIT file, store them under `training/YYYY/week-NN/screenshots/` and link them from the note when useful.
 
 Preferred command shape:

@@ -39,6 +39,21 @@ def calculate_normalized_power(records, window=30):
     return (mean([value**4 for value in rolling])) ** 0.25
 
 
+def training_load_metrics(duration_s, avg_power_value, normalized_power_value, ftp):
+    if not numeric(duration_s):
+        duration_s = None
+    work_kj = avg_power_value * duration_s / 1000 if numeric(avg_power_value) and duration_s else None
+    intensity_factor = normalized_power_value / ftp if numeric(normalized_power_value) and ftp else None
+    variability_index = normalized_power_value / avg_power_value if numeric(normalized_power_value) and numeric(avg_power_value) and avg_power_value > 0 else None
+    tss = (duration_s / 3600) * (intensity_factor**2) * 100 if duration_s and intensity_factor else None
+    return {
+        "work_kj": work_kj,
+        "if": intensity_factor,
+        "vi": variability_index,
+        "tss": tss,
+    }
+
+
 def fmt(value, digits=1, suffix=""):
     if value is None:
         return "无数据"
@@ -452,6 +467,21 @@ def zone_counts(values, zones):
     return rows
 
 
+def ftp_power_zone_rows(power_values, ftp):
+    if not ftp:
+        return []
+    zones = [
+        ("Z1 主动恢复 <55% FTP", 0, ftp * 0.55),
+        ("Z2 耐力 55-75% FTP", ftp * 0.55, ftp * 0.75),
+        ("Z3 节奏 75-90% FTP", ftp * 0.75, ftp * 0.90),
+        ("Z4 阈值 90-105% FTP", ftp * 0.90, ftp * 1.05),
+        ("Z5 VO2max 105-120% FTP", ftp * 1.05, ftp * 1.20),
+        ("Z6 无氧 120-150% FTP", ftp * 1.20, ftp * 1.50),
+        ("Z7 神经肌肉 >=150% FTP", ftp * 1.50, 100_000),
+    ]
+    return zone_counts(power_values, zones)
+
+
 def segment_rows(records, seconds=600):
     rows = []
     for start in range(0, len(records), seconds):
@@ -527,11 +557,13 @@ def write_note(args, messages, records):
     hr_zone_rows = zone_counts(hr_values, hr_zones) if hr_zones else []
     cadence_rows = zone_counts(cadence_values, [("0 停踩", 0, 1), ("<70 rpm", 1, 70), ("70-85 rpm", 70, 85), ("85-100 rpm", 85, 101), (">100 rpm", 101, 10_000)])
     power_rows = zone_counts(power_values, [("0-50 W", 0, 50), ("50-100 W", 50, 100), ("100-125 W", 100, 125), ("125-150 W", 125, 150), ("150-175 W", 150, 175), ("175-200 W", 175, 200), ("200-250 W", 200, 250), (">=250 W", 250, 10_000)])
+    ftp_zone_rows = ftp_power_zone_rows(power_values, args.ftp)
     drift = decoupling(records)
     kind, drift_text = classify_session(hr_zone_rows, drift)
 
     duration = session.get("total_timer_time") or session.get("total_elapsed_time")
     minutes = duration / 60 if numeric(duration) else (len(records) / 60 if records else None)
+    duration_s = duration if numeric(duration) else (len(records) if records else None)
     weight = args.weight_kg
     avg_power = session.get("avg_power") or avg(power_values)
     npower = session.get("normalized_power")
@@ -543,6 +575,7 @@ def write_note(args, messages, records):
     max_seen_hr = session.get("max_heart_rate") or (max(hr_values) if hr_values else None)
     avg_cad = session.get("avg_cadence") or avg(cadence_values)
     np_label = "NP（估算）" if npower_estimated else "NP"
+    load_metrics = training_load_metrics(duration_s, avg_power, npower, args.ftp)
     segment_metrics = planned_segment_rows(records, plan_segments, args.ftp) if plan_segments else []
     goal_score = training_goal_score(minutes, plan_segments, segment_metrics, drift, cadence_values, plan_goal)
 
@@ -588,6 +621,14 @@ def write_note(args, messages, records):
         lines.append(f"- 平均功率 / FTP：{fmt(avg_power / args.ftp * 100, 1, '%')}")
     if args.ftp and npower:
         lines.append(f"- NP / FTP：{fmt(npower / args.ftp * 100, 1, '%')}")
+    if numeric(load_metrics["if"]):
+        lines.append(f"- IF（强度因子）：{fmt(load_metrics['if'], 2)}")
+    if numeric(load_metrics["tss"]):
+        lines.append(f"- TSS（训练压力）：{fmt(load_metrics['tss'], 0)}")
+    if numeric(load_metrics["vi"]):
+        lines.append(f"- VI（变异指数）：{fmt(load_metrics['vi'], 2)}")
+    if numeric(load_metrics["work_kj"]):
+        lines.append(f"- 机械功：{fmt(load_metrics['work_kj'], 0, ' kJ')}")
 
     lines += ["", "## 强度判断", "", f"- 本次更接近：**{kind}**"]
     if max_hr:
@@ -616,6 +657,10 @@ def write_note(args, messages, records):
 
     lines += ["", "## 功率分布", "", "| 区间 | 时间点数 | 占比 |", "|---|---:|---:|"]
     lines.extend([f"| {name} | {count} | {pct:.1f}% |" for name, count, pct in power_rows])
+
+    if ftp_zone_rows:
+        lines += ["", "## FTP 功率区间", "", "| 区间 | 时间点数 | 占比 |", "|---|---:|---:|"]
+        lines.extend([f"| {name} | {count} | {pct:.1f}% |" for name, count, pct in ftp_zone_rows])
 
     lines += ["", "## 踏频分布", "", "| 区间 | 时间点数 | 占比 |", "|---|---:|---:|"]
     lines.extend([f"| {name} | {count} | {pct:.1f}% |" for name, count, pct in cadence_rows])
@@ -681,6 +726,10 @@ def write_note(args, messages, records):
         "avg_power": avg_power,
         "normalized_power": npower,
         "normalized_power_estimated": npower_estimated,
+        "intensity_factor": load_metrics["if"],
+        "training_stress_score": load_metrics["tss"],
+        "variability_index": load_metrics["vi"],
+        "work_kj": load_metrics["work_kj"],
         "drift_pct": drift,
         "plan_file": str(plan_path) if plan_path and plan_segments else None,
         "plan_segments": len(plan_segments),
@@ -724,6 +773,8 @@ def main():
         f"{fmt(summary['duration_min'], 1, ' min')}; "
         f"avg HR {fmt(summary['avg_hr'], 0, ' bpm')}; "
         f"avg power {fmt(summary['avg_power'], 0, ' W')}; "
+        f"IF {fmt(summary['intensity_factor'], 2)}; "
+        f"TSS {fmt(summary['training_stress_score'], 0)}; "
         f"drift {fmt(summary['drift_pct'], 1, '%')}; "
         f"plan segments {summary['plan_segments']}; "
         f"score {fmt(summary['goal_score'], 1, '/10')}"

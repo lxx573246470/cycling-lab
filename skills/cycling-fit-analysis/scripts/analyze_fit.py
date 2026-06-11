@@ -299,6 +299,7 @@ def planned_segment_rows(records, plan_segments, ftp):
                 "heart_rate": hr,
                 "cadence": cad,
                 "drift": decoupling(chunk),
+                "target_range": target_range,
                 "verdict": evaluate_segment(p, target_range),
             }
         )
@@ -322,6 +323,68 @@ def score_from_drift(drift):
     if absolute < 15:
         return 5.0, f"心率漂移 {fmt(drift, 1, '%')}，偏高"
     return 4.0, f"心率漂移 {fmt(drift, 1, '%')}，明显偏高"
+
+
+def is_hr_control_segment(row):
+    """Select steady planned work segments where HR drift is interpretable."""
+    if not row or row.get("duration_min", 0) < 5:
+        return False
+    if not numeric(row.get("drift")) or not numeric(row.get("power")) or not numeric(row.get("heart_rate")):
+        return False
+
+    name = str(row.get("name", "")).lower()
+    planned = str(row.get("planned", "")).lower()
+    excluded_words = [
+        "热身",
+        "warmup",
+        "warm-up",
+        "恢复",
+        "轻踩",
+        "放松",
+        "cooldown",
+        "cool-down",
+        "recovery",
+    ]
+    if any(word in name or word in planned for word in excluded_words):
+        return False
+
+    target_range = row.get("target_range")
+    if not target_range:
+        return True
+    low, high = target_range
+    if not numeric(low) or not numeric(high):
+        return True
+    return high - low <= 25
+
+
+def score_from_segment_hr_control(segment_metrics, whole_ride_drift):
+    control_rows = [row for row in segment_metrics if is_hr_control_segment(row)]
+    if not control_rows:
+        score, note = score_from_drift(whole_ride_drift)
+        return score, f"{note}（整场前后半粗算；本次计划没有足够可比的稳态分段）"
+
+    abs_drifts = [abs(row["drift"]) for row in control_rows]
+    median_abs = median(abs_drifts)
+    if median_abs < 5:
+        score = 9.0
+        label = "稳定"
+    elif median_abs < 7:
+        score = 8.0
+        label = "可接受"
+    elif median_abs < 10:
+        score = 6.5
+        label = "略偏高"
+    elif median_abs < 15:
+        score = 5.0
+        label = "偏高"
+    else:
+        score = 4.0
+        label = "明显偏高"
+
+    examples = "；".join(f"{row['name']} {fmt(row['drift'], 1, '%')}" for row in control_rows[:4])
+    if len(control_rows) > 4:
+        examples += f"；另 {len(control_rows) - 4} 段"
+    return score, f"可控训练段心率漂移中位数 {median_abs:.1f}%，{label}（{examples}）"
 
 
 def score_from_cadence(cadence_values):
@@ -382,7 +445,10 @@ def score_from_segments(segment_metrics):
 def training_goal_score(minutes, plan_segments, segment_metrics, drift, cadence_values, plan_goal):
     completion_score, completion_note = score_from_completion(minutes, plan_segments)
     segment_score, segment_note = score_from_segments(segment_metrics)
-    drift_score, drift_note = score_from_drift(drift)
+    if plan_segments:
+        drift_score, drift_note = score_from_segment_hr_control(segment_metrics, drift)
+    else:
+        drift_score, drift_note = score_from_drift(drift)
     cadence_score, cadence_note = score_from_cadence(cadence_values)
 
     if plan_segments:
@@ -560,6 +626,8 @@ def write_note(args, messages, records):
     ftp_zone_rows = ftp_power_zone_rows(power_values, args.ftp)
     drift = decoupling(records)
     kind, drift_text = classify_session(hr_zone_rows, drift)
+    if plan_segments and drift is not None:
+        drift_text = "整场前后半粗算；结构化变功率课仅供背景参考"
 
     duration = session.get("total_timer_time") or session.get("total_elapsed_time")
     minutes = duration / 60 if numeric(duration) else (len(records) / 60 if records else None)

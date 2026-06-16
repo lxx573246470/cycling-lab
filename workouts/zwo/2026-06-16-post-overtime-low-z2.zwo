@@ -1,0 +1,19 @@
+<workout_file>
+  <author>cycling-lab</author>
+  <name>2026-06-16 Progressive Tempo Wakeup</name>
+  <description>Progressive tempo wakeup after a late work night. FTP reference: 200 W. Keep heart rate controlled and downgrade if sleep debt shows up.</description>
+  <sportType>bike</sportType>
+  <tags>
+    <tag name="tempo"/>
+    <tag name="progressive"/>
+    <tag name="week 25"/>
+  </tags>
+  <workout>
+    <Warmup Duration="720" PowerLow="0.42" PowerHigh="0.65"/>
+    <SteadyState Duration="480" Power="0.75"/>
+    <SteadyState Duration="240" Power="0.52"/>
+    <SteadyState Duration="480" Power="0.80"/>
+    <SteadyState Duration="840" Power="0.68"/>
+    <Cooldown Duration="840" PowerLow="0.50" PowerHigh="0.38"/>
+  </workout>
+</workout_file>

@@ -1,0 +1,20 @@
+<workout_file>
+  <author>cycling-lab</author>
+  <name>2026-06-18 Pre Holiday Endurance Cadence</name>
+  <description>Denser endurance cadence session before the Dragon Boat Festival weekend. FTP reference: 200 W. Downgrade if Wednesday sweet spot leaves heavy legs.</description>
+  <sportType>bike</sportType>
+  <tags>
+    <tag name="endurance"/>
+    <tag name="cadence"/>
+    <tag name="week 25"/>
+  </tags>
+  <workout>
+    <Warmup Duration="600" PowerLow="0.42" PowerHigh="0.58"/>
+    <SteadyState Duration="720" Power="0.65"/>
+    <SteadyState Duration="180" Power="0.50"/>
+    <SteadyState Duration="720" Power="0.68"/>
+    <SteadyState Duration="180" Power="0.50"/>
+    <SteadyState Duration="720" Power="0.65"/>
+    <Cooldown Duration="480" PowerLow="0.50" PowerHigh="0.38"/>
+  </workout>
+</workout_file>

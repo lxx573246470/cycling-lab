@@ -41,6 +41,13 @@ For uploaded FIT files:
 - Pass known profile values from `profile/rider-profile.md` to the analyzer: age, height, weight, max heart rate, FTP, and athlete name.
 - After generating the note, summarize the ride in chat with the note path, primary intensity, heart-rate drift, cadence/power stability, and the next training implication.
 - If screenshots are provided with the FIT file, store them under `training/YYYY/week-NN/screenshots/` and link them from the note when useful.
+- After adding or changing training notes with TSS or power data, refresh `training/load-summary.csv`:
+
+```bash
+python3 scripts/update_training_load.py
+```
+
+Training-load policy: TSS, IF, and NP/FTP use the FTP that applied at the time of the activity. Do not recalculate historical TSS after FTP changes; record the FTP used in `training/load-summary.csv`.
 
 Preferred command shape:
 

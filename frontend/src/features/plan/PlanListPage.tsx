@@ -25,15 +25,15 @@ export function PlanListPage() {
   return (
     <>
       <PageHeader
-        title="Weekly plans"
-        description="One plan per ISO week. Each plan auto-fills seven day cards that you can edit individually."
+        title="周计划"
+        description="每个 ISO 周对应一个计划，创建后会自动生成 7 天卡片，可逐日编辑。"
         actions={
           <Link
             to={"/plans/new" as any}
             search={{ isoYear: current.year, isoWeek: current.week } as any}
             className="px-4 py-1.5 text-sm rounded bg-brand-500 hover:bg-brand-600 text-white font-medium"
           >
-            New week
+            新建本周
           </Link>
         }
       />
@@ -43,13 +43,13 @@ export function PlanListPage() {
 
       {query.data && query.data.content.length === 0 && (
         <div className="text-sm text-slate-500 p-6 border border-dashed border-slate-300 rounded text-center">
-          No weekly plans yet.{" "}
+          还没有周计划。{" "}
           <Link
             to={"/plans/new" as any}
             search={{ isoYear: current.year, isoWeek: current.week } as any}
             className="text-brand-600 hover:underline"
           >
-            Create one for W{current.week} of {current.year}
+            为 {current.year} 年 W{current.week} 创建一个
           </Link>
           .
         </div>
@@ -62,7 +62,7 @@ export function PlanListPage() {
             plan={p}
             onOpen={() => navigate({ to: "/plans/$id" as any, params: { id: p.id } as any })}
             onDelete={async () => {
-              if (!confirm(`Delete plan for W${p.isoWeek} of ${p.isoYear}?`)) return;
+              if (!confirm(`删除 ${p.isoYear} 年 W${p.isoWeek} 的周计划？`)) return;
               await remove.mutateAsync(p.id);
             }}
           />
@@ -72,7 +72,7 @@ export function PlanListPage() {
       {query.data && query.data.totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-slate-500 mt-4">
           <span>
-            {page * size + 1}–{Math.min((page + 1) * size, query.data.totalElements)} of {query.data.totalElements}
+            {page * size + 1}–{Math.min((page + 1) * size, query.data.totalElements)} / {query.data.totalElements}
           </span>
           <div className="flex gap-2">
             <button
@@ -81,7 +81,7 @@ export function PlanListPage() {
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               className="px-3 py-1 text-sm rounded border border-slate-300 disabled:opacity-50 hover:bg-slate-50"
             >
-              Prev
+              上一页
             </button>
             <button
               type="button"
@@ -89,7 +89,7 @@ export function PlanListPage() {
               onClick={() => setPage((p) => p + 1)}
               className="px-3 py-1 text-sm rounded border border-slate-300 disabled:opacity-50 hover:bg-slate-50"
             >
-              Next
+              下一页
             </button>
           </div>
         </div>
@@ -117,15 +117,15 @@ function PlanRow({
           {plan.title && <span className="text-sm text-slate-700 truncate">— {plan.title}</span>}
         </div>
         <div className="text-xs text-slate-400 mt-0.5">
-          {summariseProgress(plan.progress)} · updated {new Date(plan.updatedAt).toLocaleString()}
+          {summariseProgress(plan.progress)} · 更新于 {new Date(plan.updatedAt).toLocaleString()}
         </div>
       </button>
       <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
         <button type="button" onClick={onOpen} className="text-xs text-slate-500 hover:text-slate-700">
-          Open
+          打开
         </button>
         <button type="button" onClick={onDelete} className="text-xs text-red-500 hover:text-red-700">
-          Delete
+          删除
         </button>
       </div>
     </div>

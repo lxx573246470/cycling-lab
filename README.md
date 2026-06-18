@@ -62,6 +62,18 @@ mvn spring-boot:run
 > Requires `postgres`, `redis`, `minio` to be reachable. Easiest path:
 > `docker compose up -d postgres redis minio` and then start the Spring
 > process.
+>
+> The dev profile uses the local database by default:
+> `jdbc:postgresql://localhost:5432/cycling_lab` with
+> `cycling_lab` / `cycling_lab`. It also reads legacy repository content from
+> the parent directory of `backend/`, so `POST /api/v1/library/import-from-md`
+> defaults to `../profile/rider-profile.md` and `../plans/library`. Uploaded
+> FIT files are written under `../training/uploaded` unless
+> `TRAINING_LOCAL_ROOT` is set.
+>
+> Local dev disables login by default (`AUTH_DISABLED=true`). The backend
+> automatically uses an ADMIN user (`local@cycling-lab.local`), and the
+> frontend opens the app directly without visiting `/login`.
 
 Start the frontend:
 
@@ -82,9 +94,8 @@ npm run dev
 docker compose up --build
 ```
 
-Open <http://localhost:5173>. There is no seed user — register from the UI
-to create your first account, then promote it to ADMIN with a SQL update or
-by using the admin account created during bootstrap.
+Open <http://localhost:5173>. Login is disabled for the bundled local setup;
+the backend automatically uses `local@cycling-lab.local` as an ADMIN user.
 
 ### Default ports
 
@@ -96,6 +107,32 @@ by using the admin account created during bootstrap.
 | Redis | 6379 | |
 | MinIO API | 9000 | `minioadmin` / `minioadmin` |
 | MinIO console | 9001 | |
+
+### Local content root
+
+Set `CYCLINGLAB_CONTENT_ROOT` when starting the backend if your Markdown,
+FIT, review, or workout-file folders live outside this repository:
+
+```bash
+cd backend
+CYCLINGLAB_CONTENT_ROOT=/path/to/cycling-lab-content mvn spring-boot:run
+```
+
+Relative paths passed to `POST /api/v1/library/import-from-md` are resolved
+under that root. Absolute paths are still accepted for one-off imports.
+
+### Local auth
+
+Login is disabled by default for local development. To restore the normal
+login/register flow, start both backend and frontend with auth enabled:
+
+```bash
+cd backend
+AUTH_DISABLED=false mvn spring-boot:run
+
+cd ../frontend
+VITE_AUTH_DISABLED=false npm run dev
+```
 
 ## Tests
 

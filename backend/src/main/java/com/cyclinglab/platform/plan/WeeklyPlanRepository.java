@@ -13,13 +13,13 @@ public interface WeeklyPlanRepository extends JpaRepository<WeeklyPlanEntity, UU
 
     Optional<WeeklyPlanEntity> findByIdAndUser_Id(UUID id, UUID userId);
 
-    Optional<WeeklyPlanEntity> findByUser_IdAndIsoYearAndIsoWeek(UUID userId, int isoYear, int isoWeek);
+    Optional<WeeklyPlanEntity> findByUser_IdAndIsoYearAndIsoWeek(UUID userId, Short isoYear, Short isoWeek);
 
-    boolean existsByUser_IdAndIsoYearAndIsoWeek(UUID userId, int isoYear, int isoWeek);
+    boolean existsByUser_IdAndIsoYearAndIsoWeek(UUID userId, Short isoYear, Short isoWeek);
 
     @Query("select w from WeeklyPlanEntity w where w.user.id = :userId order by w.isoYear desc, w.isoWeek desc")
     Page<WeeklyPlanEntity> findAllByUser(@Param("userId") UUID userId, Pageable pageable);
 
     @Query("select w from WeeklyPlanEntity w where w.user.id = :userId and w.isoYear = :year order by w.isoWeek desc")
-    List<WeeklyPlanEntity> findAllByUserAndYear(@Param("userId") UUID userId, @Param("year") int year);
+    List<WeeklyPlanEntity> findAllByUserAndYear(@Param("userId") UUID userId, @Param("year") Short year);
 }

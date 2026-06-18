@@ -4,7 +4,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ErrorBanner, PageHeader, Spinner } from "@/components/ui";
 import {
   formatBytes,
+  sportTypeLabel,
   trainingFileApi,
+  trainingFileStatusLabels,
   type TrainingFileSummary,
 } from "./trainingFileApi";
 
@@ -44,8 +46,8 @@ export function TrainingsListPage() {
   return (
     <>
       <PageHeader
-        title="Trainings"
-        description="Upload FIT files from your head-unit, indoor trainer, or Garmin Connect. Each file is parsed and stored locally; you can review metrics, bests, and the full per-second record stream on the detail page."
+        title="训练记录"
+        description="上传码表、骑行台或 Garmin Connect 导出的 FIT 文件。文件会在本地解析和保存，可查看指标、最佳功率和逐秒记录。"
         actions={
           <button
             type="button"
@@ -53,7 +55,7 @@ export function TrainingsListPage() {
             className="px-3 py-1.5 text-sm rounded bg-brand-500 hover:bg-brand-600 text-white font-medium"
             disabled={upload.isPending}
           >
-            {upload.isPending ? "Uploading..." : "Upload .fit"}
+            {upload.isPending ? "上传中..." : "上传 .fit"}
           </button>
         }
       />
@@ -73,7 +75,7 @@ export function TrainingsListPage() {
 
       {list.data && list.data.content.length === 0 && (
         <div className="text-sm text-slate-500 p-6 border border-dashed border-slate-300 rounded text-center">
-          No trainings yet. Click "Upload .fit" to add one.
+          还没有训练记录。点击“上传 .fit”添加一个。
         </div>
       )}
 
@@ -86,7 +88,7 @@ export function TrainingsListPage() {
               navigate({ to: "/trainings/$id" as any, params: { id: f.id } as any })
             }
             onDelete={() => {
-              if (confirm(`Delete ${f.originalFilename}?`)) remove.mutate(f.id);
+              if (confirm(`删除 ${f.originalFilename}?`)) remove.mutate(f.id);
             }}
           />
         ))}
@@ -120,13 +122,13 @@ function TrainingRow({
         <div className="text-xs text-slate-500 mt-0.5">
           ISO {file.isoYear}-W{Math.min(file.isoWeek, 53).toString().padStart(2, "0")}
           {" · "}
-          {formatBytes(file.sizeBytes)} · {file.sportType}
+          {formatBytes(file.sizeBytes)} · {sportTypeLabel(file.sportType)}
         </div>
         <div className="text-xs text-slate-400 mt-0.5">
           {file.recordedAt
-            ? `recorded ${new Date(file.recordedAt).toLocaleString()}`
+            ? `记录于 ${new Date(file.recordedAt).toLocaleString()}`
             : file.createdAt
-              ? `uploaded ${new Date(file.createdAt).toLocaleString()}`
+              ? `上传于 ${new Date(file.createdAt).toLocaleString()}`
               : ""}
         </div>
       </div>
@@ -135,13 +137,13 @@ function TrainingRow({
         onClick={onDelete}
         className="text-sm px-3 py-1.5 rounded border border-slate-300 hover:bg-slate-50 ml-4 text-slate-500"
       >
-        Delete
+        删除
       </button>
     </div>
   );
 }
 
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge({ status }: { status: keyof typeof trainingFileStatusLabels }) {
   const colors: Record<string, string> = {
     READY: "bg-green-50 text-green-700 border-green-200",
     PARSING: "bg-amber-50 text-amber-700 border-amber-200",
@@ -153,7 +155,7 @@ function StatusBadge({ status }: { status: string }) {
     <span
       className={`text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded border ${cls}`}
     >
-      {status}
+      {trainingFileStatusLabels[status] ?? status}
     </span>
   );
 }

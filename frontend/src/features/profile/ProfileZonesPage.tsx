@@ -15,8 +15,8 @@ export function ProfileZonesPage() {
     return (
       <>
         <PageHeader
-          title="Derived zones"
-          description="Coggan 7-zone power and HR ranges, computed from your profile."
+          title="训练分区"
+          description="根据骑手档案计算心率区间和 Coggan 7 区功率区间。"
         />
         <ErrorBanner message={(query.error as Error).message} />
       </>
@@ -27,11 +27,11 @@ export function ProfileZonesPage() {
   return (
     <>
       <PageHeader
-        title="Derived zones"
-        description={`Based on max_hr=${z.maxHr} and ftp=${z.ftp}. Computed at ${z.computedAt}.`}
+        title="训练分区"
+        description={`基于最大心率 ${z.maxHr} 和 FTP ${z.ftp} 计算，更新时间：${z.computedAt}。`}
       />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card title="HR zones">
+        <Card title="心率区间">
           <ZoneTable
             rows={z.hrZones.map((row) => ({
               zone: row.zone,
@@ -44,7 +44,7 @@ export function ProfileZonesPage() {
             }))}
           />
         </Card>
-        <Card title="Power zones">
+        <Card title="功率区间">
           <ZoneTable
             rows={z.powerZones.map((row) => ({
               zone: row.zone,
@@ -57,17 +57,17 @@ export function ProfileZonesPage() {
             }))}
           />
         </Card>
-        <Card title="Cadence range">
+        <Card title="踏频范围">
           <div className="text-3xl font-bold text-slate-900">
             {z.cadenceRange.low}–{z.cadenceRange.high} <span className="text-base text-slate-500">rpm</span>
           </div>
           <p className="text-sm text-slate-500 mt-2">
-            Edit cadence low / high on the profile page to change this range.
+            在骑手档案页修改踏频上下限后，这里会自动更新。
           </p>
         </Card>
       </div>
       <div className="mt-4 text-xs text-slate-400">
-        Zone keys: {ZONE_NAMES.join(", ")} (recompute by changing FTP / max HR on the profile).
+        区间编号：{ZONE_NAMES.join(", ")}。修改档案中的 FTP 或最大心率后会重新计算。
       </div>
     </>
   );
@@ -92,10 +92,10 @@ function ZoneTable({
       <thead className="text-xs uppercase text-slate-400">
         <tr>
           <th className="text-left py-1 pr-2">Z</th>
-          <th className="text-left py-1 pr-2">Name</th>
-          <th className="text-left py-1 pr-2">Range</th>
-          <th className="text-left py-1 pr-2">Pct</th>
-          <th className="text-left py-1 pr-2 w-24">Bar</th>
+          <th className="text-left py-1 pr-2">名称</th>
+          <th className="text-left py-1 pr-2">范围</th>
+          <th className="text-left py-1 pr-2">比例</th>
+          <th className="text-left py-1 pr-2 w-24">图示</th>
         </tr>
       </thead>
       <tbody>

@@ -52,15 +52,15 @@ export function PlanNewPage() {
   return (
     <form onSubmit={onSubmit} className="space-y-6">
       <PageHeader
-        title="New weekly plan"
-        description="Pick the ISO year + week. Seven empty day cards will be created so you can fill them in afterwards."
+        title="新建周计划"
+        description="选择 ISO 年和周，系统会创建 7 天的空白卡片，之后可以逐日填写。"
         actions={
           <button
             type="submit"
             disabled={create.isPending}
             className="px-4 py-1.5 text-sm rounded bg-brand-500 hover:bg-brand-600 text-white font-medium disabled:opacity-50"
           >
-            {create.isPending ? "Creating…" : "Create"}
+            {create.isPending ? "创建中…" : "创建"}
           </button>
         }
       />
@@ -69,7 +69,7 @@ export function PlanNewPage() {
 
       <div className="bg-white border border-slate-200 rounded-lg p-4 space-y-3 max-w-xl">
         <div className="grid grid-cols-2 gap-3">
-          <Field label="ISO year" error={formState.errors.isoYear?.message}>
+          <Field label="ISO 年" error={formState.errors.isoYear?.message}>
             <input
               type="number"
               min={2000}
@@ -78,7 +78,7 @@ export function PlanNewPage() {
               {...register("isoYear", { valueAsNumber: true })}
             />
           </Field>
-          <Field label="ISO week" error={formState.errors.isoWeek?.message}>
+          <Field label="ISO 周" error={formState.errors.isoWeek?.message}>
             <input
               type="number"
               min={1}
@@ -88,17 +88,17 @@ export function PlanNewPage() {
             />
           </Field>
         </div>
-        <Field label="Title" hint="optional" error={formState.errors.title?.message}>
+        <Field label="标题" hint="可选" error={formState.errors.title?.message}>
           <input
             className={inputCls}
-            placeholder="Build week · taper · recovery"
+            placeholder="训练构建周 / 减量周 / 恢复周"
             {...register("title")}
           />
         </Field>
-        <Field label="Goal (Markdown)" hint="optional" error={formState.errors.goalMd?.message}>
+        <Field label="目标（Markdown）" hint="可选" error={formState.errors.goalMd?.message}>
           <textarea
             className={`${inputCls} min-h-[100px]`}
-            placeholder="- 6h Z2 endurance&#10;- 1x sweet-spot&#10;- 1x rest day"
+            placeholder="- 6 小时 Z2 耐力&#10;- 1 次甜点区间歇&#10;- 1 天休息"
             {...register("goalMd")}
           />
         </Field>
@@ -109,11 +109,11 @@ export function PlanNewPage() {
 }
 
 function previewLabel(year: number | undefined, week: number | undefined): string {
-  if (!year || !week) return "Pick a year and week to see the date range.";
+  if (!year || !week) return "选择年份和周数后会显示日期范围。";
   try {
     const dates = isoDatesOf(year, week);
-    return `Covers ${dates[0]} (Mon) to ${dates[6]} (Sun).`;
+    return `覆盖 ${dates[0]}（周一）到 ${dates[6]}（周日）。`;
   } catch {
-    return `Week ${week} of ${year} does not exist on the calendar.`;
+    return `${year} 年第 ${week} 周在日历中不存在。`;
   }
 }

@@ -12,7 +12,7 @@ export function ZoneBar({
   unit: string;
 }) {
   if (!rows || rows.length === 0) {
-    return <p className="text-sm text-slate-500 italic">No zone data.</p>;
+    return <p className="text-sm text-slate-500 italic">没有分区数据。</p>;
   }
   const total = rows.reduce((s, r) => s + (r.pct ?? 0), 0) || 1;
   const palette = ["#dbeafe", "#bfdbfe", "#93c5fd", "#60a5fa", "#3b82f6", "#2563eb", "#1d4ed8", "#1e3a8a"];
@@ -35,8 +35,8 @@ export function ZoneBar({
       <table className="w-full text-xs mt-3">
         <thead>
           <tr className="text-slate-500">
-            <th className="text-left py-0.5">Zone</th>
-            <th className="text-right py-0.5">Time</th>
+            <th className="text-left py-0.5">区间</th>
+            <th className="text-right py-0.5">时间</th>
             <th className="text-right py-0.5">%</th>
           </tr>
         </thead>
@@ -51,7 +51,7 @@ export function ZoneBar({
                 {r.name ?? `Z${i}`}
               </td>
               <td className="py-0.5 text-right font-mono text-slate-700">
-                {r.count != null ? `${r.count}s` : "-"}
+                {r.count != null ? `${r.count}秒` : "-"}
               </td>
               <td className="py-0.5 text-right font-mono text-slate-900">
                 {(r.pct ?? 0).toFixed(1)}%
@@ -60,7 +60,7 @@ export function ZoneBar({
           ))}
         </tbody>
       </table>
-      <p className="text-[10px] text-slate-400 mt-2">unit: {unit}</p>
+      <p className="text-[10px] text-slate-400 mt-2">单位：{unit}</p>
     </div>
   );
 }

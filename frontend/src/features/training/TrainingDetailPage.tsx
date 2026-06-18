@@ -37,59 +37,59 @@ export function TrainingDetailPage() {
         title={d.originalFilename}
         description={
           d.recordedAt
-            ? `Recorded ${new Date(d.recordedAt).toLocaleString()} 路 ISO ${d.isoYear}-W${Math.min(d.isoWeek, 53).toString().padStart(2, "0")}`
+            ? `记录于 ${new Date(d.recordedAt).toLocaleString()} · ISO ${d.isoYear}-W${Math.min(d.isoWeek, 53).toString().padStart(2, "0")}`
             : `ISO ${d.isoYear}-W${Math.min(d.isoWeek, 53).toString().padStart(2, "0")}`
         }
       />
 
       {d.status === "FAILED" && d.failureMessage && (
         <ErrorBanner
-          message={`Parse failed: ${d.failureMessage}. Re-upload or try another .fit file.`}
+          message={`解析失败：${d.failureMessage}。请重新上传或换一个 .fit 文件。`}
         />
       )}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-        <Stat label="Duration" value={formatDuration(d.session?.durationSec)} />
+        <Stat label="时长" value={formatDuration(d.session?.durationSec)} />
         <Stat
-          label="Distance"
+          label="距离"
           value={d.session?.distanceM != null ? `${(d.session.distanceM / 1000).toFixed(1)} km` : "-"}
         />
         <Stat
-          label="Avg Power"
+          label="平均功率"
           value={d.session?.avgPower != null ? `${d.session.avgPower} W` : "-"}
         />
         <Stat
-          label="Normalized Power"
+          label="标准化功率"
           value={d.session?.normalizedPower != null ? `${d.session.normalizedPower} W` : "-"}
         />
         <Stat
-          label="Avg HR"
+          label="平均心率"
           value={d.session?.avgHr != null ? `${d.session.avgHr} bpm` : "-"}
         />
         <Stat
-          label="Max HR"
+          label="最大心率"
           value={d.session?.maxHr != null ? `${d.session.maxHr} bpm` : "-"}
         />
         <Stat
-          label="Avg Cadence"
+          label="平均踏频"
           value={d.session?.avgCadence != null ? `${d.session.avgCadence} rpm` : "-"}
         />
         <Stat
-          label="HR drift"
+          label="心率漂移"
           value={d.session?.hrDriftPct != null ? `${d.session.hrDriftPct.toFixed(1)}%` : "-"}
         />
       </div>
 
       {d.session && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-          <Card title="Power curve (recorded)">
+          <Card title="功率曲线（实际记录）">
             {samplesQ.data ? (
               <TrainingChart samples={samplesQ.data.content} />
             ) : (
               <Spinner />
             )}
           </Card>
-          <Card title="Best rolling average power">
+          <Card title="最佳滚动平均功率">
             <BestRollingTable rows={d.session.bestRolling ?? []} />
           </Card>
         </div>
@@ -97,20 +97,20 @@ export function TrainingDetailPage() {
 
       {d.session && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-          <Card title="HR zones">
+          <Card title="心率区间">
             <ZoneBar rows={d.session.hrZoneDistribution ?? []} unit="%" />
           </Card>
-          <Card title="Power zones">
+          <Card title="功率区间">
             <ZoneBar rows={d.session.powerZoneDistribution ?? []} unit="W" />
           </Card>
-          <Card title="Cadence zones">
+          <Card title="踏频区间">
             <ZoneBar rows={d.session.cadenceZoneDistribution ?? []} unit="rpm" />
           </Card>
         </div>
       )}
 
       {d.session?.tenMinSegments && d.session.tenMinSegments.length > 0 && (
-        <Card title="10-minute blocks">
+        <Card title="10 分钟分段">
           <TenMinTable rows={d.session.tenMinSegments} />
         </Card>
       )}
@@ -131,15 +131,15 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 function BestRollingTable({ rows }: { rows: any[] }) {
   if (!rows || rows.length === 0) {
-    return <p className="text-sm text-slate-500 italic">No bests.</p>;
+    return <p className="text-sm text-slate-500 italic">没有最佳功率数据。</p>;
   }
   return (
     <table className="w-full text-sm">
       <thead>
         <tr className="text-xs text-slate-500 uppercase tracking-wide">
-          <th className="text-left py-1">Window</th>
-          <th className="text-right py-1">Avg power</th>
-          <th className="text-right py-1">At</th>
+          <th className="text-left py-1">窗口</th>
+          <th className="text-right py-1">平均功率</th>
+          <th className="text-right py-1">位置</th>
         </tr>
       </thead>
       <tbody>
@@ -148,7 +148,7 @@ function BestRollingTable({ rows }: { rows: any[] }) {
             <td className="py-1 text-slate-700">
               {r.windowSec < 60
                 ? `${r.windowSec}s`
-                : `${Math.floor(r.windowSec / 60)} min`}
+                : `${Math.floor(r.windowSec / 60)} 分钟`}
             </td>
             <td className="py-1 text-right text-slate-900 font-mono">
               {Math.round(r.avgPower)} W
@@ -168,10 +168,10 @@ function TenMinTable({ rows }: { rows: any[] }) {
     <table className="w-full text-sm">
       <thead>
         <tr className="text-xs text-slate-500 uppercase tracking-wide">
-          <th className="text-left py-1">Segment</th>
-          <th className="text-right py-1">Power</th>
-          <th className="text-right py-1">HR</th>
-          <th className="text-right py-1">Cadence</th>
+          <th className="text-left py-1">分段</th>
+          <th className="text-right py-1">功率</th>
+          <th className="text-right py-1">心率</th>
+          <th className="text-right py-1">踏频</th>
         </tr>
       </thead>
       <tbody>

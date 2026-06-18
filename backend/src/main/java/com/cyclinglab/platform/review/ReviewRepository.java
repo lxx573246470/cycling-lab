@@ -14,7 +14,7 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, UUID> {
     Optional<ReviewEntity> findByIdAndUser_Id(UUID id, UUID userId);
 
     Optional<ReviewEntity> findByUser_IdAndScopeAndIsoYearAndIsoWeek(
-        UUID userId, ReviewScope scope, int isoYear, int isoWeek
+        UUID userId, ReviewScope scope, Short isoYear, Short isoWeek
     );
 
     Page<ReviewEntity> findAllByUser_IdOrderByUpdatedAtDesc(UUID userId, Pageable pageable);

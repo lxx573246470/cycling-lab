@@ -1,17 +1,22 @@
 import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useAuthStore } from "@/features/auth/authStore";
+import { AUTH_DISABLED, useAuthStore } from "@/features/auth/authStore";
 
 const navItems = [
-  { to: "/", label: "Dashboard" },
-  { to: "/profile", label: "Rider Profile" },
-  { to: "/profile/zones", label: "Zones" },
-  { to: "/library", label: "Workout Library" },
-  { to: "/plans", label: "Weekly Plans" },
-  { to: "/workouts", label: "Workout Files" },
-  { to: "/trainings", label: "Trainings" },
-  { to: "/reviews", label: "Reviews" },
-  { to: "/admin/users", label: "Admin" },
+  { to: "/", label: "概览" },
+  { to: "/profile", label: "骑手档案" },
+  { to: "/profile/zones", label: "分区" },
+  { to: "/library", label: "训练模板库" },
+  { to: "/plans", label: "周计划" },
+  { to: "/workouts", label: "训练文件" },
+  { to: "/trainings", label: "训练记录" },
+  { to: "/reviews", label: "复盘" },
+  { to: "/admin/users", label: "管理" },
 ];
+
+const roleLabels: Record<string, string> = {
+  ADMIN: "管理员",
+  USER: "普通用户",
+};
 
 export function AppLayout() {
   const user = useAuthStore((s) => s.user);
@@ -36,14 +41,16 @@ export function AppLayout() {
             <div className="flex items-center gap-3 text-sm">
               <span className="text-slate-600">{user.displayName}</span>
               <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs">
-                {user.role}
+                {roleLabels[user.role] ?? user.role}
               </span>
-              <button
-                onClick={onLogout}
-                className="px-3 py-1 text-sm rounded border border-slate-300 hover:bg-slate-50"
-              >
-                Sign out
-              </button>
+              {!AUTH_DISABLED && (
+                <button
+                  onClick={onLogout}
+                  className="px-3 py-1 text-sm rounded border border-slate-300 hover:bg-slate-50"
+                >
+                  退出
+                </button>
+              )}
             </div>
           )}
         </div>

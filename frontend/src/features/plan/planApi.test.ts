@@ -61,9 +61,9 @@ describe("currentIsoWeek", () => {
 });
 
 describe("weekdayLabel", () => {
-  it("maps ISO 1..7 to Mon..Sun", () => {
-    expect(weekdayLabel(1)).toBe("Mon");
-    expect(weekdayLabel(7)).toBe("Sun");
+  it("maps ISO 1..7 to Chinese weekday labels", () => {
+    expect(weekdayLabel(1)).toBe("周一");
+    expect(weekdayLabel(7)).toBe("周日");
   });
   it("falls back to ? for out-of-range", () => {
     expect(weekdayLabel(0)).toBe("?");
@@ -79,16 +79,16 @@ describe("formatWeekRange", () => {
 
 describe("summariseProgress", () => {
   const empty: WeeklyPlanProgress = { total: 0, planned: 0, done: 0, partial: 0, skipped: 0, rescheduled: 0 };
-  it("returns 'no days' for empty progress", () => {
-    expect(summariseProgress(empty)).toBe("no days");
+  it("returns the empty progress label", () => {
+    expect(summariseProgress(empty)).toBe("还没有安排");
   });
-  it("returns 'done n/n' when all done", () => {
-    expect(summariseProgress({ ...empty, total: 7, done: 7 })).toBe("done 7/7");
+  it("returns the all-done label", () => {
+    expect(summariseProgress({ ...empty, total: 7, done: 7 })).toBe("已完成 7/7");
   });
   it("lists each non-zero status", () => {
     expect(
       summariseProgress({ total: 5, planned: 2, done: 1, partial: 1, skipped: 1, rescheduled: 0 }),
-    ).toBe("1 done · 1 partial · 2 planned · 1 skipped");
+    ).toBe("1 已完成 · 1 部分完成 · 2 计划中 · 1 跳过");
   });
 });
 

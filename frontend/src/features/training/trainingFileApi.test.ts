@@ -15,9 +15,9 @@ describe("format helpers", () => {
 
   it("formats duration", () => {
     expect(formatDuration(0)).toBe("-");
-    expect(formatDuration(60)).toBe("1m 00s");
-    expect(formatDuration(3600 + 30 * 60 + 15)).toBe("1h 30m");
-    expect(formatDuration(3300)).toBe("55m 00s");
+    expect(formatDuration(60)).toBe("1分 00秒");
+    expect(formatDuration(3600 + 30 * 60 + 15)).toBe("1小时 30分钟");
+    expect(formatDuration(3300)).toBe("55分 00秒");
   });
 
   it("formats offset as m:ss", () => {

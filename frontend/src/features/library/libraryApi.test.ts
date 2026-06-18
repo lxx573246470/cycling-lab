@@ -28,11 +28,11 @@ describe("libraryApi helpers", () => {
   });
 
   it("formatDuration formats human-readable strings", () => {
-    expect(formatDuration(30)).toBe("30s");
-    expect(formatDuration(60)).toBe("1m");
-    expect(formatDuration(90)).toBe("1m30s");
-    expect(formatDuration(3600)).toBe("1h");
-    expect(formatDuration(4500)).toBe("1h15m");
+    expect(formatDuration(30)).toBe("30秒");
+    expect(formatDuration(60)).toBe("1分钟");
+    expect(formatDuration(90)).toBe("1分30秒");
+    expect(formatDuration(3600)).toBe("1小时");
+    expect(formatDuration(4500)).toBe("1小时15分钟");
   });
 
   it("parseStructure accepts valid JSON", () => {

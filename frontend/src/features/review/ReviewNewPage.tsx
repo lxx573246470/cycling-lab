@@ -16,7 +16,7 @@ export function ReviewNewPage() {
   const now = currentIsoWeek();
   const [year, setYear] = useState<number>(now.year);
   const [week, setWeek] = useState<number>(now.week);
-  const [title, setTitle] = useState<string>(`Week ${now.week} review`);
+  const [title, setTitle] = useState<string>(`${now.year} 年 W${now.week} 周复盘`);
 
   const create = useMutation({
     mutationFn: () =>
@@ -25,7 +25,7 @@ export function ReviewNewPage() {
         isoYear: scope === "WEEK" ? year : undefined,
         isoWeek: scope === "WEEK" ? week : undefined,
         title,
-        contentMd: "## Highlights\n\n- \n\n## Lowlights\n\n- \n\n## Next week\n\n- ",
+        contentMd: "## 亮点\n\n- \n\n## 问题\n\n- \n\n## 下周计划\n\n- ",
       }),
     onSuccess: (r) => {
       router.invalidate();
@@ -36,8 +36,8 @@ export function ReviewNewPage() {
   return (
     <>
       <PageHeader
-        title="New review"
-        description="Start a fresh review. For weekly reviews we need the (year, week) pair; the Markdown editor opens immediately after creation."
+        title="新建复盘"
+        description="创建新的复盘。周复盘需要填写 ISO 年和周数，创建后会进入 Markdown 编辑器。"
       />
 
       {create.error && <ErrorBanner message={(create.error as Error).message} />}
@@ -45,19 +45,19 @@ export function ReviewNewPage() {
       <div className="bg-white border border-slate-200 rounded-lg p-4 space-y-3 max-w-md">
         <div>
           <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-            Scope
+            范围
           </label>
           <div className="flex gap-2 mt-1">
             <ScopeButton active={scope === "WEEK"} onClick={() => setScope("WEEK")}>
-              Weekly
+              周复盘
             </ScopeButton>
             <ScopeButton active={scope === "PHASE"} onClick={() => setScope("PHASE")}>
-              Phase
+              阶段复盘
             </ScopeButton>
           </div>
         </div>
 
-        <Field label="Title">
+        <Field label="标题">
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -67,7 +67,7 @@ export function ReviewNewPage() {
 
         {scope === "WEEK" && (
           <div className="grid grid-cols-2 gap-2">
-            <Field label="ISO year">
+            <Field label="ISO 年">
               <input
                 type="number"
                 value={year}
@@ -77,7 +77,7 @@ export function ReviewNewPage() {
                 className="w-full px-3 py-2 text-sm border border-slate-300 rounded"
               />
             </Field>
-            <Field label="ISO week">
+            <Field label="ISO 周">
               <input
                 type="number"
                 value={week}
@@ -96,7 +96,7 @@ export function ReviewNewPage() {
           onClick={() => create.mutate()}
           className="px-3 py-1.5 text-sm rounded bg-brand-500 hover:bg-brand-600 text-white font-medium disabled:opacity-50"
         >
-          {create.isPending ? <Spinner /> : "Create review"}
+          {create.isPending ? <Spinner /> : "创建复盘"}
         </button>
       </div>
     </>

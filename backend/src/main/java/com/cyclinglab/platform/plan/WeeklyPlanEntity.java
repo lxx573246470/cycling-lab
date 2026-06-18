@@ -49,10 +49,10 @@ public class WeeklyPlanEntity {
     private UserEntity user;
 
     @Column(name = "iso_year", nullable = false)
-    private Integer isoYear;
+    private Short isoYear;
 
     @Column(name = "iso_week", nullable = false)
-    private Integer isoWeek;
+    private Short isoWeek;
 
     @Column(name = "title", length = 128)
     private String title;

@@ -1,7 +1,7 @@
 ﻿import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { CATEGORIES, libraryApi, type WorkoutTemplateListItem } from "./libraryApi";
+import { CATEGORIES, categoryLabel, libraryApi, type WorkoutTemplateListItem } from "./libraryApi";
 import { ErrorBanner, PageHeader, Spinner } from "@/components/ui";
 import { formatDuration } from "./libraryApi";
 
@@ -31,14 +31,14 @@ export function LibraryListPage() {
   return (
     <>
       <PageHeader
-        title="Workout library"
-        description="Reusable workout templates. 6 categories, versioned, with structure you can re-use in weekly plans."
+        title="训练模板库"
+        description="管理可复用的训练模板，支持分类、版本和周计划复用。"
         actions={
           <Link
             to={"/library/new" as any}
             className="px-3 py-1.5 text-sm rounded bg-brand-500 hover:bg-brand-600 text-white font-medium"
           >
-            + New
+            新建
           </Link>
         }
       />
@@ -47,7 +47,7 @@ export function LibraryListPage() {
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by name…"
+          placeholder="按名称搜索…"
           className="flex-1 px-3 py-1.5 border border-slate-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
         />
         <select
@@ -55,7 +55,7 @@ export function LibraryListPage() {
           onChange={(e) => setCategory(e.target.value)}
           className="px-3 py-1.5 border border-slate-300 rounded text-sm"
         >
-          <option value="">All categories</option>
+          <option value="">全部分类</option>
           {CATEGORIES.map((c) => (
             <option key={c.code} value={c.code}>
               {c.label}
@@ -76,7 +76,7 @@ export function LibraryListPage() {
               !category ? "bg-brand-50 text-brand-700 font-medium" : "hover:bg-slate-100"
             }`}
           >
-            All <span className="text-xs text-slate-400 ml-1">({totalCount(counts.data)})</span>
+            全部 <span className="text-xs text-slate-400 ml-1">({totalCount(counts.data)})</span>
           </button>
           {CATEGORIES.map((c) => (
             <button
@@ -98,7 +98,7 @@ export function LibraryListPage() {
         <div className="flex-1 min-w-0">
           {query.data && query.data.content.length === 0 && (
             <div className="text-sm text-slate-500 p-6 border border-dashed border-slate-300 rounded text-center">
-              No templates yet. <Link to={"/library/new" as any} className="text-brand-600 hover:underline">Create one</Link>.
+              还没有训练模板。 <Link to={"/library/new" as any} className="text-brand-600 hover:underline">创建一个</Link>。
             </div>
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -112,7 +112,7 @@ export function LibraryListPage() {
                   queryClient.invalidateQueries({ queryKey: ["library"] });
                 }}
                 onArchive={async () => {
-                  if (!confirm(`Archive "${item.name}"?`)) return;
+                  if (!confirm(`归档 "${item.name}"?`)) return;
                   await libraryApi.archive(item.id);
                   queryClient.invalidateQueries({ queryKey: ["library"] });
                 }}
@@ -152,7 +152,7 @@ function TemplateCard({
           >
             <div className="text-base font-semibold text-slate-900 truncate">{item.name}</div>
             <div className="text-xs text-slate-400 mt-0.5">
-              {item.category} • {formatDuration(item.totalDurationSec)} • {item.blockCount} blocks
+              {categoryLabel(item.category)} • {formatDuration(item.totalDurationSec)} • {item.blockCount} 个区块
             </div>
           </button>
         </div>
@@ -173,13 +173,13 @@ function TemplateCard({
       )}
       <div className="flex gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
         <button type="button" onClick={onOpen} className="text-xs text-slate-500 hover:text-slate-700">
-          Open
+          打开
         </button>
         <button type="button" onClick={onDuplicate} className="text-xs text-slate-500 hover:text-slate-700">
-          Duplicate
+          复制
         </button>
         <button type="button" onClick={onArchive} className="text-xs text-red-500 hover:text-red-700 ml-auto">
-          Archive
+          归档
         </button>
       </div>
     </div>

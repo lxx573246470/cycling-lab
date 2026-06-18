@@ -17,6 +17,11 @@ cyclinglab:
     access-token-ttl-seconds: 900
     refresh-token-ttl-seconds: 604800
     issuer: cycling-lab
+  auth:
+    disabled: false
+    local-user:
+      email: local@cycling-lab.local
+      display-name: Local Rider
   storage:
     local:
       root: ./build/test-training
@@ -25,6 +30,8 @@ cyclinglab:
       access-key: minioadmin
       secret-key: minioadmin
       bucket: cycling-lab-test
+  content:
+    root: .
   cors:
     allowed-origins:
       - http://localhost:5173

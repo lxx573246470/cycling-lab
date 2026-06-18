@@ -12,6 +12,13 @@ export const trainingFileStatusSchema = z.enum([
 ]);
 export type TrainingFileStatus = z.infer<typeof trainingFileStatusSchema>;
 
+export const trainingFileStatusLabels: Record<TrainingFileStatus, string> = {
+  PENDING: "等待中",
+  PARSING: "解析中",
+  READY: "已就绪",
+  FAILED: "失败",
+};
+
 export const trainingFileSummarySchema = z.object({
   id: z.string().uuid(),
   isoYear: z.number().int(),
@@ -112,7 +119,7 @@ export const trainingFileApi = {
       body: form,
     });
     if (!res.ok) {
-      let message = `Upload failed: ${res.status}`;
+      let message = `上传失败：${res.status}`;
       try {
         const body = (await res.json()) as { message?: string };
         if (body.message) message = body.message;
@@ -137,12 +144,21 @@ export function formatDuration(sec: number | null | undefined): string {
   const m = Math.floor((sec % 3600) / 60);
   const s = sec % 60;
   return h > 0
-    ? `${h}h ${m.toString().padStart(2, "0")}m`
-    : `${m}m ${s.toString().padStart(2, "0")}s`;
+    ? `${h}小时 ${m.toString().padStart(2, "0")}分钟`
+    : `${m}分 ${s.toString().padStart(2, "0")}秒`;
 }
 
 export function formatOffset(sec: number): string {
   const m = Math.floor(sec / 60);
   const s = sec % 60;
   return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+export function sportTypeLabel(sportType: string): string {
+  const labels: Record<string, string> = {
+    bike: "骑行",
+    run: "跑步",
+    row: "划船",
+  };
+  return labels[sportType] ?? sportType;
 }

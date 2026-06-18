@@ -4,6 +4,11 @@ import { api } from "@/lib/api";
 export const reviewScopeSchema = z.enum(["WEEK", "PHASE"]);
 export type ReviewScope = z.infer<typeof reviewScopeSchema>;
 
+export const reviewScopeLabels: Record<ReviewScope, string> = {
+  WEEK: "周复盘",
+  PHASE: "阶段复盘",
+};
+
 export const reviewDtoSchema = z.object({
   id: z.string().uuid(),
   scope: reviewScopeSchema,

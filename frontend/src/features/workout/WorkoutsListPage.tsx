@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { PageHeader, Spinner, ErrorBanner } from "@/components/ui";
-import { workoutFileApi, formatBytes, type WorkoutFileSummary } from "./workoutFileApi";
+import { workoutFileApi, formatBytes, sportTypeLabel, type WorkoutFileSummary } from "./workoutFileApi";
 
 export function WorkoutsListPage() {
   const q = useQuery({
@@ -11,8 +11,8 @@ export function WorkoutsListPage() {
   return (
     <>
       <PageHeader
-        title="Generated workouts"
-        description="ZWO files you've created from the library or ad-hoc structures. Each file is a self-contained snapshot you can import into Zwift, TrainingPeaks, Rouvy, etc."
+        title="已生成训练文件"
+        description="这里保存从模板库或临时结构生成的 ZWO 文件。每个文件都是独立快照，可导入 Zwift、TrainingPeaks、Rouvy 等软件。"
       />
 
       {q.error && <ErrorBanner message={(q.error as Error).message} />}
@@ -20,11 +20,11 @@ export function WorkoutsListPage() {
 
       {q.data && q.data.content.length === 0 && (
         <div className="text-sm text-slate-500 p-6 border border-dashed border-slate-300 rounded text-center">
-          No generated files yet. Go to the{" "}
+          还没有生成训练文件。前往{" "}
           <a href="/library" className="text-brand-600 hover:underline">
-            workout library
+            训练模板库
           </a>{" "}
-          and click "Generate .zwo" on a template, or use the new-workout form.
+          打开模板后点击“生成 .zwo”。
         </div>
       )}
 
@@ -45,11 +45,11 @@ function WorkoutFileRow({ file }: { file: WorkoutFileSummary }) {
           {file.name}
         </div>
         <div className="text-xs text-slate-500 mt-0.5">
-          {file.format} · {formatBytes(file.sizeBytes)} · {file.sportType}
+          {file.format} · {formatBytes(file.sizeBytes)} · {sportTypeLabel(file.sportType)}
         </div>
         <div className="text-xs text-slate-400 mt-0.5">
-          created {new Date(file.createdAt).toLocaleString()}
-          {file.sourceTemplateId && " · from library template"}
+          创建于 {new Date(file.createdAt).toLocaleString()}
+          {file.sourceTemplateId && " · 来自模板库"}
         </div>
         {file.tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-1.5">
@@ -69,7 +69,7 @@ function WorkoutFileRow({ file }: { file: WorkoutFileSummary }) {
         onClick={() => workoutFileApi.download(file.id, `${file.name}.zwo`)}
         className="text-sm px-3 py-1.5 rounded border border-slate-300 hover:bg-slate-50 ml-4"
       >
-        Download .zwo
+        下载 .zwo
       </button>
     </div>
   );

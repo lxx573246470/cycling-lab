@@ -105,8 +105,8 @@ public class TrainingService {
         // ISO week defaults to the current date; the parser will overwrite
         // it when it sees a real {@code start_time}.
         int[] yw = IsoWeek.of(java.time.LocalDate.now(java.time.ZoneOffset.UTC));
-        file.setIsoYear(yw[0]);
-        file.setIsoWeek(yw[1]);
+        file.setIsoYear(toShort(yw[0]));
+        file.setIsoWeek(toShort(yw[1]));
         file.setRecordedAt(Instant.now());
 
         // Persist metadata first so we have a row to attach the session to.
@@ -128,8 +128,8 @@ public class TrainingService {
             if (r.startedAt() != null) {
                 file.setRecordedAt(r.startedAt());
                 int[] parsed = IsoWeek.of(r.startedAt().atZone(java.time.ZoneOffset.UTC).toLocalDate());
-                file.setIsoYear(parsed[0]);
-                file.setIsoWeek(parsed[1]);
+                file.setIsoYear(toShort(parsed[0]));
+                file.setIsoWeek(toShort(parsed[1]));
             }
         } catch (InvalidFitFileException | IOException e) {
             log.warn("FIT parse failed for {}: {}", original, e.getMessage());
@@ -225,8 +225,8 @@ public class TrainingService {
     private TrainingFileSummaryDto toSummary(TrainingFileEntity e) {
         return new TrainingFileSummaryDto(
             e.getId(),
-            e.getIsoYear(),
-            e.getIsoWeek(),
+            e.getIsoYear().intValue(),
+            e.getIsoWeek().intValue(),
             e.getOriginalFilename(),
             e.getSportType(),
             e.getSizeBytes(),
@@ -244,8 +244,8 @@ public class TrainingService {
         }
         return new TrainingFileDetailDto(
             e.getId(),
-            e.getIsoYear(),
-            e.getIsoWeek(),
+            e.getIsoYear().intValue(),
+            e.getIsoWeek().intValue(),
             e.getOriginalFilename(),
             e.getSportType(),
             e.getSizeBytes(),
@@ -308,6 +308,10 @@ public class TrainingService {
 
     private static Integer toInt(Short s) {
         return s == null ? null : s.intValue();
+    }
+
+    private static Short toShort(int value) {
+        return (short) value;
     }
 
     private static String sha256(byte[] bytes) {

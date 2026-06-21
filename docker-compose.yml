@@ -86,15 +86,24 @@ services:
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
       MINIO_BUCKET: cycling-lab
+      CYCLINGLAB_CONTENT_ROOT: /content
+      TRAINING_LOCAL_ROOT: /content/training/uploaded
+      AUTH_DISABLED: "true"
+      AUTH_LOCAL_EMAIL: local@cycling-lab.local
+      AUTH_LOCAL_DISPLAY_NAME: Local Rider
       JWT_SECRET: ${JWT_SECRET:-change-me-change-me-change-me-change-me-please}
       CORS_ALLOWED_ORIGINS: http://localhost:5173
     ports:
       - "8080:8080"
+    volumes:
+      - .:/content
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_AUTH_DISABLED: "true"
     container_name: cycling-lab-frontend
     depends_on:
       - backend

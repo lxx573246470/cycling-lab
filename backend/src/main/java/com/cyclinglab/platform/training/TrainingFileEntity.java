@@ -46,10 +46,10 @@ public class TrainingFileEntity {
     private UserEntity user;
 
     @Column(name = "iso_year", nullable = false)
-    private Integer isoYear;
+    private Short isoYear;
 
     @Column(name = "iso_week", nullable = false)
-    private Integer isoWeek;
+    private Short isoWeek;
 
     @Column(name = "original_filename", nullable = false, length = 255)
     private String originalFilename;

@@ -26,8 +26,8 @@ export function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
-        <p className="text-slate-500 mt-1">Welcome back, {user?.displayName ?? "Rider"}.</p>
+        <h1 className="text-2xl font-bold text-slate-900">概览</h1>
+        <p className="text-slate-500 mt-1">欢迎回来，{user?.displayName ?? "骑手"}。</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -41,18 +41,18 @@ export function DashboardPage() {
 }
 
 function ProfileWidget({ query }: { query: ReturnType<typeof useQuery<Awaited<ReturnType<typeof profileApi.get>>, Error>> }) {
-  if (query.isLoading) return <WidgetSkeleton title="Rider profile" />;
+  if (query.isLoading) return <WidgetSkeleton title="骑手档案" />;
   const p = query.data;
   if (!p) {
     return (
       <div className="bg-amber-50 border border-amber-200 rounded-lg p-5">
-        <div className="text-xs uppercase tracking-wide text-amber-700 font-semibold">Rider profile</div>
-        <div className="mt-2 text-base font-semibold text-amber-900">Incomplete</div>
+        <div className="text-xs uppercase tracking-wide text-amber-700 font-semibold">骑手档案</div>
+        <div className="mt-2 text-base font-semibold text-amber-900">未完善</div>
         <p className="text-sm text-amber-800 mt-1">
-          Set FTP, max HR, height & weight so the system can compute zones.
+          填写 FTP、最大心率、身高和体重后，系统才能计算训练分区。
         </p>
         <Link to={"/profile" as any} className="inline-block mt-3 text-sm text-brand-700 hover:underline">
-          Open profile →
+          打开档案 →
         </Link>
       </div>
     );
@@ -62,17 +62,17 @@ function ProfileWidget({ query }: { query: ReturnType<typeof useQuery<Awaited<Re
     <div className="bg-white border border-slate-200 rounded-lg p-5">
       <div className="flex items-start justify-between">
         <div>
-          <div className="text-xs uppercase tracking-wide text-slate-400">Rider profile</div>
+          <div className="text-xs uppercase tracking-wide text-slate-400">骑手档案</div>
           <div className="mt-1 text-lg font-semibold text-slate-900">{p.displayName}</div>
           <div className="text-sm text-slate-500 mt-1">
-            FTP {p.ftp}W · max HR {p.maxHr}bpm · BMI {bmi}
+            FTP {p.ftp}W · 最大心率 {p.maxHr}bpm · BMI {bmi}
           </div>
         </div>
         <Link
           to={"/profile" as any}
           className="text-xs px-2 py-1 border border-slate-300 rounded hover:bg-slate-50"
         >
-          Edit
+          编辑
         </Link>
       </div>
     </div>
@@ -80,15 +80,15 @@ function ProfileWidget({ query }: { query: ReturnType<typeof useQuery<Awaited<Re
 }
 
 function LibraryWidget({ counts }: { counts: ReturnType<typeof useQuery<Awaited<ReturnType<typeof libraryApi.categoryCounts>>, Error>> }) {
-  if (counts.isLoading) return <WidgetSkeleton title="Workout library" />;
+  if (counts.isLoading) return <WidgetSkeleton title="训练模板库" />;
   const c = counts.data ?? {};
   const total = Object.values(c).reduce((a, b) => a + b, 0);
   return (
     <div className="bg-white border border-slate-200 rounded-lg p-5">
       <div className="flex items-start justify-between">
         <div>
-          <div className="text-xs uppercase tracking-wide text-slate-400">Workout library</div>
-          <div className="mt-1 text-lg font-semibold text-slate-900">{total} templates</div>
+          <div className="text-xs uppercase tracking-wide text-slate-400">训练模板库</div>
+          <div className="mt-1 text-lg font-semibold text-slate-900">{total} 个模板</div>
           <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-500">
             {CATEGORIES.map((cat) => (
               <span key={cat.code}>
@@ -101,7 +101,7 @@ function LibraryWidget({ counts }: { counts: ReturnType<typeof useQuery<Awaited<
           to={"/library" as any}
           className="text-xs px-2 py-1 border border-slate-300 rounded hover:bg-slate-50"
         >
-          Open
+          打开
         </Link>
       </div>
     </div>
@@ -115,7 +115,7 @@ function CurrentWeekWidget({
   current: { year: number; week: number };
   plans: ReturnType<typeof useQuery<Awaited<ReturnType<typeof planApi.list>>, Error>>;
 }) {
-  if (plans.isLoading) return <WidgetSkeleton title={`This week (W${current.week} · ${current.year})`} />;
+  if (plans.isLoading) return <WidgetSkeleton title={`本周 (W${current.week} · ${current.year})`} />;
   const all = plans.data?.content ?? [];
   const thisWeek = all.find((p) => p.isoYear === current.year && p.isoWeek === current.week) ?? null;
   const recent = all.filter((p) => !(p.isoYear === current.year && p.isoWeek === current.week)).slice(0, 3);
@@ -125,12 +125,12 @@ function CurrentWeekWidget({
       <div className="flex items-start justify-between">
         <div>
           <div className="text-xs uppercase tracking-wide text-slate-400">
-            This week · W{current.week} · {current.year}
+            本周 · W{current.week} · {current.year}
           </div>
           {thisWeek ? (
             <>
               <div className="mt-1 text-lg font-semibold text-slate-900">
-                {thisWeek.title ?? "Untitled plan"}
+                {thisWeek.title ?? "未命名计划"}
               </div>
               <div className="text-sm text-slate-500 mt-1">
                 {summariseProgress(thisWeek.progress)}
@@ -138,9 +138,9 @@ function CurrentWeekWidget({
             </>
           ) : (
             <>
-              <div className="mt-1 text-lg font-semibold text-slate-900">No plan yet</div>
+              <div className="mt-1 text-lg font-semibold text-slate-900">本周还没有计划</div>
               <p className="text-sm text-slate-500 mt-1">
-                Plan your training for this ISO week.
+                为当前 ISO 周安排训练。
               </p>
             </>
           )}
@@ -152,7 +152,7 @@ function CurrentWeekWidget({
               params={{ id: thisWeek.id } as any}
               className="text-xs px-2 py-1 border border-slate-300 rounded hover:bg-slate-50"
             >
-              Open
+              打开
             </Link>
           )}
           <Link
@@ -160,14 +160,14 @@ function CurrentWeekWidget({
             search={{ isoYear: current.year, isoWeek: current.week } as any}
             className="text-xs px-2 py-1 rounded bg-brand-500 hover:bg-brand-600 text-white"
           >
-            {thisWeek ? "Plan next week" : "Plan this week"}
+            {thisWeek ? "安排下周" : "安排本周"}
           </Link>
         </div>
       </div>
 
       {recent.length > 0 && (
         <div className="mt-4 border-t border-slate-100 pt-3">
-          <div className="text-xs uppercase tracking-wide text-slate-400 mb-2">Recent</div>
+          <div className="text-xs uppercase tracking-wide text-slate-400 mb-2">最近</div>
           <ul className="space-y-1 text-sm">
             {recent.map((p) => (
               <RecentRow key={p.id} plan={p} />

@@ -1,7 +1,9 @@
 package com.cyclinglab.platform.importer;
 
+import com.cyclinglab.platform.common.AppProperties;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LibraryImportController {
 
     private final MarkdownImporter markdownImporter;
+    private final AppProperties appProperties;
 
     /**
      * M1 import tool. Pass the path to {@code profile/rider-profile.md} and
@@ -28,8 +31,25 @@ public class LibraryImportController {
         @RequestParam(defaultValue = "plans/library") String libraryPath
     ) throws IOException {
         return markdownImporter.importFromPaths(
-            Path.of(profilePath),
-            Path.of(libraryPath)
+            resolveContentPath(profilePath),
+            resolveContentPath(libraryPath)
         );
+    }
+
+    private Path resolveContentPath(String rawPath) {
+        Path path = Path.of(rawPath);
+        if (path.isAbsolute()) {
+            return path.normalize();
+        }
+        String configuredRoot = appProperties.content() == null ? null : appProperties.content().root();
+        Path root = (configuredRoot == null || configuredRoot.isBlank())
+            ? Paths.get("..")
+            : Paths.get(configuredRoot);
+        Path normalizedRoot = root.toAbsolutePath().normalize();
+        Path resolved = normalizedRoot.resolve(path).normalize();
+        if (!resolved.startsWith(normalizedRoot)) {
+            throw new IllegalArgumentException("path escapes content root: " + rawPath);
+        }
+        return resolved;
     }
 }

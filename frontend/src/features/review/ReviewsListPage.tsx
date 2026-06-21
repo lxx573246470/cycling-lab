@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ErrorBanner, PageHeader, Spinner } from "@/components/ui";
-import { reviewApi, type ReviewDto } from "./reviewApi";
+import { reviewApi, reviewScopeLabels, type ReviewDto } from "./reviewApi";
 
 export function ReviewsListPage() {
   const qc = useQueryClient();
@@ -18,8 +18,8 @@ export function ReviewsListPage() {
   return (
     <>
       <PageHeader
-        title="Reviews"
-        description="Weekly and phase retrospectives. Each review is a Markdown document with optional structured metrics (TSS, distance, hours, etc.)."
+        title="复盘"
+        description="管理周复盘和阶段复盘。每篇复盘都是 Markdown 文档，可附带 TSS、距离、时长等结构化指标。"
       />
 
       {q.error && <ErrorBanner message={(q.error as Error).message} />}
@@ -27,7 +27,7 @@ export function ReviewsListPage() {
 
       {q.data && q.data.content.length === 0 && (
         <div className="text-sm text-slate-500 p-6 border border-dashed border-slate-300 rounded text-center">
-          No reviews yet. Open a weekly plan and use "Write weekly review" to start one.
+          还没有复盘。可以从周计划进入并创建周复盘。
         </div>
       )}
 
@@ -40,7 +40,7 @@ export function ReviewsListPage() {
               navigate({ to: "/reviews/$id" as any, params: { id: r.id } as any })
             }
             onDelete={() => {
-              if (confirm(`Delete "${r.title}"?`)) remove.mutate(r.id);
+              if (confirm(`删除 "${r.title}"?`)) remove.mutate(r.id);
             }}
           />
         ))}
@@ -70,7 +70,7 @@ function ReviewRow({
             {review.title}
           </button>
           <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded border bg-slate-50 text-slate-700 border-slate-200">
-            {review.scope}
+            {reviewScopeLabels[review.scope]}
           </span>
           {review.isoYear != null && review.isoWeek != null && (
             <span className="text-xs text-slate-500">
@@ -79,7 +79,7 @@ function ReviewRow({
           )}
         </div>
         <div className="text-xs text-slate-400 mt-0.5">
-          updated {new Date(review.updatedAt).toLocaleString()}
+          更新于 {new Date(review.updatedAt).toLocaleString()}
         </div>
         <div className="text-xs text-slate-500 mt-1 line-clamp-2">
           {snippet(review.contentMd)}
@@ -90,7 +90,7 @@ function ReviewRow({
         onClick={onDelete}
         className="text-sm px-3 py-1.5 rounded border border-slate-300 hover:bg-slate-50 ml-4 text-slate-500"
       >
-        Delete
+        删除
       </button>
     </div>
   );

@@ -5,8 +5,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CATEGORIES,
+  categoryLabel,
   libraryApi,
   parseStructure,
+  sourceLabel,
   templatePutSchema,
   totalDurationSec,
   type Block,
@@ -34,7 +36,7 @@ export function LibraryDetailPage() {
 
   if (query.isLoading) return <Spinner />;
   if (query.error) return <ErrorBanner message={(query.error as Error).message} />;
-  if (!query.data) return <ErrorBanner message="Not found" />;
+  if (!query.data) return <ErrorBanner message="没有找到模板" />;
 
   return <DetailForm key={query.data.id} initial={query.data} navigate={navigate} qc={qc} />;
 }
@@ -110,7 +112,7 @@ function DetailForm({
     <form onSubmit={onReplace} className="space-y-6">
       <PageHeader
         title={initial.name}
-        description={`Version ${initial.currentVersion} · ${initial.category} · ${initial.source}`}
+        description={`版本 ${initial.currentVersion} · ${categoryLabel(initial.category)} · ${sourceLabel(initial.source)}`}
         actions={
           <>
             <Link
@@ -118,65 +120,65 @@ function DetailForm({
               params={{ id: initial.id } as any}
               className="px-3 py-1.5 text-sm rounded border border-slate-300 hover:bg-slate-50"
             >
-              History ({initial.currentVersion})
+              历史版本（{initial.currentVersion}）
             </Link>
             <button
               type="button"
               onClick={() => duplicate.mutate()}
               className="px-3 py-1.5 text-sm rounded border border-slate-300 hover:bg-slate-50"
             >
-              Duplicate
+              复制
             </button>
             <button
               type="button"
               onClick={() => {
-                if (!confirm(`Archive "${initial.name}"?`)) return;
+                if (!confirm(`归档 "${initial.name}"?`)) return;
                 patch.mutate({ archived: true }, {
                   onSuccess: () => navigate({ to: "/library" as any as any as any }),
                 });
               }}
               className="px-3 py-1.5 text-sm rounded border border-red-200 text-red-600 hover:bg-red-50"
             >
-              Archive
+              归档
             </button>
             <button
               type="submit"
               disabled={replace.isPending}
               className="px-4 py-1.5 text-sm rounded bg-brand-500 hover:bg-brand-600 text-white font-medium disabled:opacity-50"
             >
-              {replace.isPending ? "Saving…" : "Save (new version)"}
+              {replace.isPending ? "保存中…" : "保存为新版本"}
             </button>
           </>
         }
       />
 
       {(replace.error || patch.error) && (
-        <ErrorBanner message={(replace.error || patch.error)?.message ?? "Save failed"} />
+        <ErrorBanner message={(replace.error || patch.error)?.message ?? "保存失败"} />
       )}
       {initial.archived && (
         <div className="p-3 text-sm bg-amber-50 border border-amber-200 rounded text-amber-800">
-          This template is archived. Restore it from the list view to make changes.
+          这个模板已归档。需要修改时请先在列表页恢复。
         </div>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="space-y-4">
-          <Card title="Metadata">
+          <Card title="基础信息">
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Name" error={formState.errors.name?.message}>
+              <Field label="名称" error={formState.errors.name?.message}>
                 <input className={inputCls} {...register("name")} />
               </Field>
-              <Field label="Category" error={formState.errors.category?.message}>
+              <Field label="分类" error={formState.errors.category?.message}>
                 <select className={inputCls} {...register("category")}>
                   {CATEGORIES.map((c) => (
                     <option key={c.code} value={c.code}>{c.label}</option>
                   ))}
                 </select>
               </Field>
-              <Field label="Intensity">
+              <Field label="强度">
                 <input className={inputCls} {...register("intensity")} />
               </Field>
-              <Field label="Tags (comma-separated)">
+              <Field label="标签（用英文逗号分隔）">
                 <input
                   className={inputCls}
                   value={tagsText}
@@ -188,7 +190,7 @@ function DetailForm({
                   onBlur={() => onPatchMeta({ tags: watch("tags") })}
                 />
               </Field>
-              <Field label="Description" className="col-span-2">
+              <Field label="描述" className="col-span-2">
                 <textarea
                   className={`${inputCls} min-h-[80px]`}
                   {...register("descriptionMd")}
@@ -198,10 +200,10 @@ function DetailForm({
             </div>
           </Card>
 
-          <Card title="Blocks">
+          <Card title="训练区块">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-slate-500">
-                Total {Math.round(totalDurationSec(liveStructure) / 60)}m
+                总计 {Math.round(totalDurationSec(liveStructure) / 60)} 分钟
               </span>
             </div>
             <BlockEditor
@@ -212,17 +214,17 @@ function DetailForm({
                 setValue("structureJson", JSON.stringify(s), { shouldValidate: true });
               }}
             />
-            <Field label="Change note" hint="Required when saving a new version." className="mt-3" error={formState.errors.changeNote?.message}>
-              <input className={inputCls} placeholder="e.g. tightened warmup, added cooldown" {...register("changeNote")} />
+            <Field label="变更说明" hint="保存新版本时建议填写。" className="mt-3" error={formState.errors.changeNote?.message}>
+              <input className={inputCls} placeholder="例如：缩短热身，增加放松段" {...register("changeNote")} />
             </Field>
           </Card>
         </div>
 
         <div className="space-y-4">
-          <Card title="Power curve">
+          <Card title="功率曲线">
             <PowerCurvePreview structure={liveStructure} />
           </Card>
-          <Card title="Raw structure_json">
+          <Card title="原始 structure_json">
             <pre className="text-[11px] overflow-auto max-h-40 bg-slate-50 p-2 rounded">
               {JSON.stringify(liveStructure, null, 2)}
             </pre>
@@ -235,7 +237,7 @@ function DetailForm({
         sourceTemplateId={initial.id}
       />
 
-      <WorkoutFileListSection title="Generated from this template" refreshKey={`from-${initial.id}`} />
+      <WorkoutFileListSection title="由这个模板生成的文件" refreshKey={`from-${initial.id}`} />
     </form>
   );
 }

@@ -56,7 +56,7 @@ public class ReviewService {
     public ReviewDto findWeekly(int isoYear, int isoWeek) {
         UUID userId = TenantContext.getCurrentUserId();
         return repo
-            .findByUser_IdAndScopeAndIsoYearAndIsoWeek(userId, ReviewScope.WEEK, isoYear, isoWeek)
+            .findByUser_IdAndScopeAndIsoYearAndIsoWeek(userId, ReviewScope.WEEK, toShort(isoYear), toShort(isoWeek))
             .map(this::toDto)
             .orElseThrow(() -> new ReviewNotFoundException(
                 "No weekly review for " + isoYear + "-W" + isoWeek
@@ -76,7 +76,7 @@ public class ReviewService {
             // Validate the (year, week) actually exists.
             IsoWeek.datesOf(req.isoYear(), req.isoWeek());
             repo.findByUser_IdAndScopeAndIsoYearAndIsoWeek(
-                userId, ReviewScope.WEEK, req.isoYear(), req.isoWeek()
+                userId, ReviewScope.WEEK, toShort(req.isoYear()), toShort(req.isoWeek())
             ).ifPresent(existing -> {
                 throw new ReviewConflictException(
                     "A WEEK review for " + req.isoYear() + "-W" + req.isoWeek() + " already exists"
@@ -98,8 +98,8 @@ public class ReviewService {
         e.setUser(user);
         e.setScope(req.scope());
         e.setScopeId(req.scopeId());
-        e.setIsoYear(req.isoYear());
-        e.setIsoWeek(req.isoWeek());
+        e.setIsoYear(toNullableShort(req.isoYear()));
+        e.setIsoWeek(toNullableShort(req.isoWeek()));
         e.setPeriodStart(req.periodStart());
         e.setPeriodEnd(req.periodEnd());
         e.setTitle(req.title().trim());
@@ -118,8 +118,8 @@ public class ReviewService {
             IsoWeek.datesOf(req.isoYear(), req.isoWeek());
         }
         validatePeriod(req.periodStart(), req.periodEnd());
-        e.setIsoYear(req.isoYear());
-        e.setIsoWeek(req.isoWeek());
+        e.setIsoYear(toNullableShort(req.isoYear()));
+        e.setIsoWeek(toNullableShort(req.isoWeek()));
         e.setPeriodStart(req.periodStart());
         e.setPeriodEnd(req.periodEnd());
         e.setTitle(req.title().trim());
@@ -171,8 +171,8 @@ public class ReviewService {
             e.getId(),
             e.getScope(),
             e.getScopeId(),
-            e.getIsoYear(),
-            e.getIsoWeek(),
+            toNullableInt(e.getIsoYear()),
+            toNullableInt(e.getIsoWeek()),
             e.getPeriodStart(),
             e.getPeriodEnd(),
             e.getTitle(),
@@ -181,5 +181,17 @@ public class ReviewService {
             e.getCreatedAt(),
             e.getUpdatedAt()
         );
+    }
+
+    private Short toShort(int value) {
+        return (short) value;
+    }
+
+    private Short toNullableShort(Integer value) {
+        return value == null ? null : value.shortValue();
+    }
+
+    private Integer toNullableInt(Short value) {
+        return value == null ? null : value.intValue();
     }
 }

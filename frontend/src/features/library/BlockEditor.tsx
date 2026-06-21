@@ -1,6 +1,6 @@
 ﻿import { useState } from "react";
 import type { Block, Structure } from "./libraryApi";
-import { formatDuration, totalDurationSec } from "./libraryApi";
+import { blockTypeLabel, formatDuration, totalDurationSec } from "./libraryApi";
 
 const BLOCK_TYPES = ["warmup", "steady", "intervals", "cooldown", "rest"] as const;
 
@@ -49,13 +49,13 @@ export function BlockEditor({
   return (
     <div className="space-y-2">
       {structure.blocks.length === 0 && (
-        <p className="text-sm text-slate-500 italic">No blocks yet. Add one below.</p>
+        <p className="text-sm text-slate-500 italic">还没有训练区块，可以在下方添加。</p>
       )}
       {structure.blocks.map((b, i) => (
         <div key={i} className="border border-slate-200 rounded p-2">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs uppercase tracking-wide text-slate-400 font-mono w-6">#{i + 1}</span>
-            <span className="text-sm font-medium text-slate-700">{b.type}</span>
+            <span className="text-sm font-medium text-slate-700">{blockTypeLabel(b.type)}</span>
             <span className="text-xs text-slate-500 ml-auto">
               {formatDuration(durationOf(b))}
             </span>
@@ -79,11 +79,11 @@ export function BlockEditor({
               onClick={() => append(t)}
               className="text-xs px-2 py-1 border border-dashed border-slate-300 rounded hover:bg-slate-50"
             >
-              + {t}
+              + {blockTypeLabel(t)}
             </button>
           ))}
           <span className="text-xs text-slate-400 ml-auto self-center">
-            total {formatDuration(totalDurationSec(structure))}
+            总计 {formatDuration(totalDurationSec(structure))}
           </span>
         </div>
       )}
@@ -117,49 +117,49 @@ function BlockFields({
     case "warmup":
       return (
         <div className="grid grid-cols-3 gap-2">
-          <NumberField label="duration (sec)" value={block.durationSec} readOnly={ro} onChange={(v) => onChange({ ...block, durationSec: v })} />
-          <NumberField label="powerLow" step={0.01} value={block.powerLow} readOnly={ro} onChange={(v) => onChange({ ...block, powerLow: v })} />
-          <NumberField label="powerHigh" step={0.01} value={block.powerHigh} readOnly={ro} onChange={(v) => onChange({ ...block, powerHigh: v })} />
+          <NumberField label="时长（秒）" value={block.durationSec} readOnly={ro} onChange={(v) => onChange({ ...block, durationSec: v })} />
+          <NumberField label="起始功率" step={0.01} value={block.powerLow} readOnly={ro} onChange={(v) => onChange({ ...block, powerLow: v })} />
+          <NumberField label="结束功率" step={0.01} value={block.powerHigh} readOnly={ro} onChange={(v) => onChange({ ...block, powerHigh: v })} />
         </div>
       );
     case "steady":
       return (
         <div className="grid grid-cols-2 gap-2">
-          <NumberField label="duration (sec)" value={block.durationSec} readOnly={ro} onChange={(v) => onChange({ ...block, durationSec: v })} />
-          <NumberField label="power" step={0.01} value={block.power} readOnly={ro} onChange={(v) => onChange({ ...block, power: v })} />
+          <NumberField label="时长（秒）" value={block.durationSec} readOnly={ro} onChange={(v) => onChange({ ...block, durationSec: v })} />
+          <NumberField label="功率" step={0.01} value={block.power} readOnly={ro} onChange={(v) => onChange({ ...block, power: v })} />
         </div>
       );
     case "cooldown":
       return (
         <div className="grid grid-cols-3 gap-2">
-          <NumberField label="duration (sec)" value={block.durationSec} readOnly={ro} onChange={(v) => onChange({ ...block, durationSec: v })} />
-          <NumberField label="powerLow" step={0.01} value={block.powerLow} readOnly={ro} onChange={(v) => onChange({ ...block, powerLow: v })} />
-          <NumberField label="powerHigh" step={0.01} value={block.powerHigh} readOnly={ro} onChange={(v) => onChange({ ...block, powerHigh: v })} />
+          <NumberField label="时长（秒）" value={block.durationSec} readOnly={ro} onChange={(v) => onChange({ ...block, durationSec: v })} />
+          <NumberField label="起始功率" step={0.01} value={block.powerLow} readOnly={ro} onChange={(v) => onChange({ ...block, powerLow: v })} />
+          <NumberField label="结束功率" step={0.01} value={block.powerHigh} readOnly={ro} onChange={(v) => onChange({ ...block, powerHigh: v })} />
         </div>
       );
     case "rest":
       return (
-        <NumberField label="duration (sec)" value={block.durationSec} readOnly={ro} onChange={(v) => onChange({ ...block, durationSec: v })} />
+        <NumberField label="时长（秒）" value={block.durationSec} readOnly={ro} onChange={(v) => onChange({ ...block, durationSec: v })} />
       );
     case "intervals":
       return (
         <div className="space-y-2">
           <div className="grid grid-cols-2 gap-2">
-            <NumberField label="repeats" value={block.repeats} readOnly={ro} onChange={(v) => onChange({ ...block, repeats: v })} />
+            <NumberField label="重复次数" value={block.repeats} readOnly={ro} onChange={(v) => onChange({ ...block, repeats: v })} />
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <p className="text-xs text-slate-500 mb-1">on</p>
+              <p className="text-xs text-slate-500 mb-1">工作段</p>
               <div className="grid grid-cols-2 gap-1">
-                <NumberField label="duration" value={block.on.durationSec} readOnly={ro} onChange={(v) => onChange({ ...block, on: { ...block.on, durationSec: v } })} />
-                <NumberField label="power" step={0.01} value={block.on.power} readOnly={ro} onChange={(v) => onChange({ ...block, on: { ...block.on, power: v } })} />
+                <NumberField label="时长" value={block.on.durationSec} readOnly={ro} onChange={(v) => onChange({ ...block, on: { ...block.on, durationSec: v } })} />
+                <NumberField label="功率" step={0.01} value={block.on.power} readOnly={ro} onChange={(v) => onChange({ ...block, on: { ...block.on, power: v } })} />
               </div>
             </div>
             <div>
-              <p className="text-xs text-slate-500 mb-1">off</p>
+              <p className="text-xs text-slate-500 mb-1">恢复段</p>
               <div className="grid grid-cols-2 gap-1">
-                <NumberField label="duration" value={block.off.durationSec} readOnly={ro} onChange={(v) => onChange({ ...block, off: { ...block.off, durationSec: v } })} />
-                <NumberField label="power" step={0.01} value={block.off.power} readOnly={ro} onChange={(v) => onChange({ ...block, off: { ...block.off, power: v } })} />
+                <NumberField label="时长" value={block.off.durationSec} readOnly={ro} onChange={(v) => onChange({ ...block, off: { ...block.off, durationSec: v } })} />
+                <NumberField label="功率" step={0.01} value={block.off.power} readOnly={ro} onChange={(v) => onChange({ ...block, off: { ...block.off, power: v } })} />
               </div>
             </div>
           </div>

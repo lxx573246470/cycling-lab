@@ -78,7 +78,7 @@ export function ErrorBanner({ message }: { message: string }) {
 export function Spinner() {
   return (
     <div className="flex items-center justify-center p-8 text-sm text-slate-500">
-      <div className="animate-pulse">Loading…</div>
+      <div className="animate-pulse">加载中…</div>
     </div>
   );
 }

@@ -70,15 +70,15 @@ export function LibraryNewPage() {
   return (
     <form onSubmit={onSubmit} className="space-y-6">
       <PageHeader
-        title="New workout template"
-        description="A reusable block list. Power values are fractions of FTP (e.g. 0.65 = 65% FTP)."
+        title="新建训练模板"
+        description="创建可复用的训练区块。功率值按 FTP 比例填写，例如 0.65 表示 65% FTP。"
         actions={
           <button
             type="submit"
             disabled={create.isPending}
             className="px-4 py-1.5 text-sm rounded bg-brand-500 hover:bg-brand-600 text-white font-medium disabled:opacity-50"
           >
-            {create.isPending ? "Creating…" : "Create"}
+            {create.isPending ? "创建中…" : "创建"}
           </button>
         }
       />
@@ -88,22 +88,22 @@ export function LibraryNewPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="space-y-4">
           <div className="bg-white border border-slate-200 rounded-lg p-4 space-y-3">
-            <Field label="Name" error={formState.errors.name?.message}>
+            <Field label="名称" error={formState.errors.name?.message}>
               <input className={inputCls} placeholder="Z2 Base Ride" {...register("name")} />
             </Field>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Category" error={formState.errors.category?.message}>
+              <Field label="分类" error={formState.errors.category?.message}>
                 <select className={inputCls} {...register("category")}>
                   {CATEGORIES.map((c) => (
                     <option key={c.code} value={c.code}>{c.label}</option>
                   ))}
                 </select>
               </Field>
-              <Field label="Intensity" error={formState.errors.intensity?.message}>
+              <Field label="强度" error={formState.errors.intensity?.message}>
                 <input className={inputCls} placeholder="Z2 / sweet-spot / VO2" {...register("intensity")} />
               </Field>
             </div>
-            <Field label="Tags (comma-separated)" error={formState.errors.tags?.message as string | undefined}>
+            <Field label="标签（用英文逗号分隔）" error={formState.errors.tags?.message as string | undefined}>
               <input
                 className={inputCls}
                 value={tagsText}
@@ -117,16 +117,16 @@ export function LibraryNewPage() {
                 }}
               />
             </Field>
-            <Field label="Description (Markdown)">
+            <Field label="描述（Markdown）">
               <textarea className={`${inputCls} min-h-[80px]`} {...register("descriptionMd")} />
             </Field>
           </div>
 
           <div className="bg-white border border-slate-200 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">Blocks</h2>
+              <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">训练区块</h2>
               <span className="text-xs text-slate-500">
-                Total: {Math.round(totalDurationSec(structure) / 60)}m
+                总计：{Math.round(totalDurationSec(structure) / 60)} 分钟
               </span>
             </div>
             <BlockEditor
@@ -147,12 +147,12 @@ export function LibraryNewPage() {
         <div className="space-y-4">
           <div className="bg-white border border-slate-200 rounded-lg p-4">
             <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">
-              Power curve preview
+              功率曲线预览
             </h2>
             <PowerCurvePreview structure={structure} />
           </div>
           <div className="text-xs text-slate-400">
-            Raw structure_json:
+            原始 structure_json:
             <pre className="mt-2 p-2 bg-slate-50 rounded text-[11px] overflow-auto max-h-40">
               {structureJson}
             </pre>

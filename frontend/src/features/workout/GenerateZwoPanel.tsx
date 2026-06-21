@@ -5,6 +5,7 @@ import { ErrorBanner, Field, Spinner } from "@/components/ui";
 import {
   workoutFileApi,
   formatBytes,
+  sportTypeLabel,
   type WorkoutFileCreateInput,
   type WorkoutFileDto,
 } from "./workoutFileApi";
@@ -22,7 +23,7 @@ export function GenerateZwoPanel({
   onCreated?: (dto: WorkoutFileDto) => void;
 }) {
   const qc = useQueryClient();
-  const [name, setName] = useState("My Workout");
+  const [name, setName] = useState("我的训练");
   const [description, setDescription] = useState("");
   const [tagsText, setTagsText] = useState("");
   const [sportType, setSportType] = useState<"bike" | "run" | "row">("bike");
@@ -55,18 +56,16 @@ export function GenerateZwoPanel({
   return (
     <div className="bg-white border border-slate-200 rounded-lg p-4 space-y-3">
       <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
-        Generate Zwift .zwo file
+        生成 Zwift .zwo 文件
       </h2>
       <p className="text-xs text-slate-500">
-        Builds a trainer-ready XML file from the current structure. The file
-        stores a copy of the structure, so editing the source template later
-        does not retroactively change the .zwo.
+        根据当前结构生成可导入骑行台软件的 XML 文件。文件会保存一份结构副本，之后修改源模板不会影响已生成的 .zwo。
       </p>
 
       {error && <ErrorBanner message={error} />}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <Field label="Name">
+        <Field label="名称">
           <input
             className={inputCls}
             value={name}
@@ -74,26 +73,26 @@ export function GenerateZwoPanel({
             placeholder="Z2 Base Ride"
           />
         </Field>
-        <Field label="Sport type">
+        <Field label="运动类型">
           <select
             className={inputCls}
             value={sportType}
             onChange={(e) => setSportType(e.target.value as "bike" | "run" | "row")}
           >
-            <option value="bike">bike</option>
-            <option value="run">run</option>
-            <option value="row">row</option>
+            <option value="bike">骑行</option>
+            <option value="run">跑步</option>
+            <option value="row">划船</option>
           </select>
         </Field>
       </div>
-      <Field label="Description" hint="optional">
+      <Field label="描述" hint="可选">
         <textarea
           className={`${inputCls} min-h-[60px]`}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
       </Field>
-      <Field label="Tags (comma-separated)" hint="optional">
+      <Field label="标签（用英文逗号分隔）" hint="可选">
         <input
           className={inputCls}
           value={tagsText}
@@ -109,18 +108,18 @@ export function GenerateZwoPanel({
           disabled={create.isPending || !name.trim()}
           className="px-4 py-1.5 text-sm rounded bg-brand-500 hover:bg-brand-600 text-white font-medium disabled:opacity-50"
         >
-          {create.isPending ? "Generating…" : "Generate .zwo"}
+          {create.isPending ? "生成中…" : "生成 .zwo"}
         </button>
       </div>
 
       {create.data && (
         <div className="mt-2 p-3 rounded bg-emerald-50 border border-emerald-200 text-sm">
           <div className="font-medium text-emerald-900">
-            Generated {create.data.name} · {formatBytes(create.data.sizeBytes)}
+            已生成 {create.data.name} · {formatBytes(create.data.sizeBytes)}
           </div>
           <div className="text-emerald-800 text-xs mt-1">
-            Source: {create.data.sourceTemplateId ? "library template" : "inline structure"}.
-            Ready to import into Zwift / TrainingPeaks / Rouvy.
+            来源： {create.data.sourceTemplateId ? "模板库" : "当前结构"}.
+            可导入 Zwift / TrainingPeaks / Rouvy。
           </div>
           <div className="flex gap-3 mt-2">
             <button
@@ -130,13 +129,13 @@ export function GenerateZwoPanel({
               }
               className="text-xs px-2 py-1 rounded bg-emerald-600 text-white hover:bg-emerald-700"
             >
-              Download .zwo
+              下载 .zwo
             </button>
             <Link
               to={"/workouts" as any}
               className="text-xs px-2 py-1 rounded border border-emerald-300 text-emerald-800 hover:bg-emerald-50"
             >
-              See all files
+              查看全部文件
             </Link>
           </div>
         </div>
@@ -162,7 +161,7 @@ export function WorkoutFileListSection({
   if (items.length === 0) {
     return (
       <div className="text-sm text-slate-500 p-4 border border-dashed border-slate-300 rounded text-center">
-        No generated files yet.
+        还没有生成训练文件。
       </div>
     );
   }
@@ -183,7 +182,7 @@ export function WorkoutFileListSection({
               {f.name}
             </div>
             <div className="text-xs text-slate-400 mt-0.5">
-              {f.format} · {formatBytes(f.sizeBytes)} · {f.sportType} ·{" "}
+              {f.format} · {formatBytes(f.sizeBytes)} · {sportTypeLabel(f.sportType)} ·{" "}
               {new Date(f.createdAt).toLocaleString()}
             </div>
           </div>
@@ -192,7 +191,7 @@ export function WorkoutFileListSection({
             onClick={() => workoutFileApi.download(f.id, `${f.name}.zwo`)}
             className="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-50 ml-3"
           >
-            Download
+            下载
           </button>
         </div>
       ))}

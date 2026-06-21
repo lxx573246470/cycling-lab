@@ -2,12 +2,12 @@ import { z } from "zod";
 import { api } from "@/lib/api";
 
 export const CATEGORIES = [
-  { code: "endurance", label: "Endurance" },
-  { code: "recovery", label: "Recovery" },
-  { code: "intervals", label: "Intervals" },
-  { code: "outdoor", label: "Outdoor" },
-  { code: "testing", label: "Testing" },
-  { code: "strength", label: "Strength" },
+  { code: "endurance", label: "耐力" },
+  { code: "recovery", label: "恢复" },
+  { code: "intervals", label: "间歇" },
+  { code: "outdoor", label: "户外" },
+  { code: "testing", label: "测试" },
+  { code: "strength", label: "力量" },
 ] as const;
 
 export type CategoryCode = (typeof CATEGORIES)[number]["code"];
@@ -179,11 +179,35 @@ export function totalDurationSec(structure: Structure): number {
 }
 
 export function formatDuration(seconds: number): string {
-  if (seconds < 60) return `${seconds}s`;
+  if (seconds < 60) return `${seconds}秒`;
   const minutes = Math.floor(seconds / 60);
   const remaining = seconds % 60;
-  if (minutes < 60) return remaining === 0 ? `${minutes}m` : `${minutes}m${remaining}s`;
+  if (minutes < 60) return remaining === 0 ? `${minutes}分钟` : `${minutes}分${remaining}秒`;
   const hours = Math.floor(minutes / 60);
   const remMin = minutes % 60;
-  return remMin === 0 ? `${hours}h` : `${hours}h${remMin}m`;
+  return remMin === 0 ? `${hours}小时` : `${hours}小时${remMin}分钟`;
+}
+
+export function categoryLabel(code: string): string {
+  return CATEGORIES.find((c) => c.code === code)?.label ?? code;
+}
+
+export function blockTypeLabel(type: Block["type"]): string {
+  const labels: Record<Block["type"], string> = {
+    warmup: "热身",
+    steady: "稳定骑",
+    intervals: "间歇",
+    cooldown: "放松",
+    rest: "休息",
+  };
+  return labels[type] ?? type;
+}
+
+export function sourceLabel(source: WorkoutTemplateDto["source"]): string {
+  const labels: Record<WorkoutTemplateDto["source"], string> = {
+    MANUAL: "手动创建",
+    IMPORT: "导入",
+    AI_SUGGESTED: "AI 建议",
+  };
+  return labels[source] ?? source;
 }

@@ -92,3 +92,12 @@ export function formatBytes(n: number): string {
   if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
   return `${(n / (1024 * 1024)).toFixed(2)} MB`;
 }
+
+export function sportTypeLabel(sportType: string): string {
+  const labels: Record<string, string> = {
+    bike: "骑行",
+    run: "跑步",
+    row: "划船",
+  };
+  return labels[sportType] ?? sportType;
+}

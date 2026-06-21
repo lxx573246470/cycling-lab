@@ -4,6 +4,16 @@ import { useAuthStore } from "@/features/auth/authStore";
 import { ErrorBanner, PageHeader, Spinner } from "@/components/ui";
 import { adminApi, type AdminUserDto, type UserRole, type UserStatus } from "./adminApi";
 
+const roleLabels: Record<UserRole, string> = {
+  USER: "普通用户",
+  ADMIN: "管理员",
+};
+
+const statusLabels: Record<UserStatus, string> = {
+  ACTIVE: "启用",
+  DISABLED: "停用",
+};
+
 /**
  * Admin user management. The /api/v1/admin/** endpoints are gated on
  * ROLE_ADMIN, so we also gate the page client-side on the local user
@@ -44,8 +54,7 @@ export function AdminUsersPage() {
   if (!isAdmin) {
     return (
       <div className="p-6 border border-amber-200 bg-amber-50 text-amber-800 rounded">
-        You are signed in as a regular user. The admin console is only
-        available to users with the ADMIN role.
+        当前账号不是管理员，无法访问用户管理。
       </div>
     );
   }
@@ -53,8 +62,8 @@ export function AdminUsersPage() {
   return (
     <>
       <PageHeader
-        title="Admin / users"
-        description="Search, filter, and manage user accounts. Promote a user to ADMIN to grant access to this page; set status to DISABLED to suspend login without losing data."
+        title="用户管理"
+        description="搜索、筛选和管理用户账号。设为管理员后可访问本页面；停用账号会暂停登录但保留数据。"
       />
 
       {patch.error && <ErrorBanner message={(patch.error as Error).message} />}
@@ -66,7 +75,7 @@ export function AdminUsersPage() {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Email or display name"
+          placeholder="邮箱或显示名"
           className="flex-1 px-3 py-1.5 text-sm border border-slate-300 rounded"
         />
         <select
@@ -74,18 +83,18 @@ export function AdminUsersPage() {
           onChange={(e) => setRole(e.target.value as "" | UserRole)}
           className="px-3 py-1.5 text-sm border border-slate-300 rounded"
         >
-          <option value="">All roles</option>
-          <option value="USER">USER</option>
-          <option value="ADMIN">ADMIN</option>
+          <option value="">全部角色</option>
+          <option value="USER">{roleLabels.USER}</option>
+          <option value="ADMIN">{roleLabels.ADMIN}</option>
         </select>
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value as "" | UserStatus)}
           className="px-3 py-1.5 text-sm border border-slate-300 rounded"
         >
-          <option value="">All statuses</option>
-          <option value="ACTIVE">ACTIVE</option>
-          <option value="DISABLED">DISABLED</option>
+          <option value="">全部状态</option>
+          <option value="ACTIVE">{statusLabels.ACTIVE}</option>
+          <option value="DISABLED">{statusLabels.DISABLED}</option>
         </select>
       </div>
 
@@ -93,12 +102,12 @@ export function AdminUsersPage() {
         <table className="w-full text-sm">
           <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
             <tr>
-              <th className="text-left px-3 py-2">Email</th>
-              <th className="text-left px-3 py-2">Display name</th>
-              <th className="text-left px-3 py-2">Role</th>
-              <th className="text-left px-3 py-2">Status</th>
-              <th className="text-left px-3 py-2">Created</th>
-              <th className="text-right px-3 py-2">Actions</th>
+              <th className="text-left px-3 py-2">邮箱</th>
+              <th className="text-left px-3 py-2">显示名</th>
+              <th className="text-left px-3 py-2">角色</th>
+              <th className="text-left px-3 py-2">状态</th>
+              <th className="text-left px-3 py-2">创建时间</th>
+              <th className="text-right px-3 py-2">操作</th>
             </tr>
           </thead>
           <tbody>
@@ -110,14 +119,14 @@ export function AdminUsersPage() {
                 onChangeRole={(r) => patch.mutate({ id: u.id, role: r, status: u.status })}
                 onChangeStatus={(s) => patch.mutate({ id: u.id, role: u.role, status: s })}
                 onDelete={() => {
-                  if (confirm(`Delete ${u.email}? This wipes their data.`)) remove.mutate(u.id);
+                  if (confirm(`删除 ${u.email}？这会清除该用户的数据。`)) remove.mutate(u.id);
                 }}
               />
             ))}
             {list.data && list.data.content.length === 0 && (
               <tr>
                 <td colSpan={6} className="text-center text-slate-500 py-6">
-                  No users match the current filter.
+                  当前筛选条件下没有用户。
                 </td>
               </tr>
             )}
@@ -155,8 +164,8 @@ function UserRow({
           onChange={(e) => onChangeRole(e.target.value as UserRole)}
           className="px-2 py-0.5 text-xs border border-slate-300 rounded"
         >
-          <option value="USER">USER</option>
-          <option value="ADMIN">ADMIN</option>
+          <option value="USER">{roleLabels.USER}</option>
+          <option value="ADMIN">{roleLabels.ADMIN}</option>
         </select>
       </td>
       <td className="px-3 py-2">
@@ -165,8 +174,8 @@ function UserRow({
           onChange={(e) => onChangeStatus(e.target.value as UserStatus)}
           className="px-2 py-0.5 text-xs border border-slate-300 rounded"
         >
-          <option value="ACTIVE">ACTIVE</option>
-          <option value="DISABLED">DISABLED</option>
+          <option value="ACTIVE">{statusLabels.ACTIVE}</option>
+          <option value="DISABLED">{statusLabels.DISABLED}</option>
         </select>
       </td>
       <td className="px-3 py-2 text-slate-500 text-xs">{createdAt}</td>
@@ -175,10 +184,10 @@ function UserRow({
           type="button"
           onClick={onDelete}
           disabled={isMe}
-          title={isMe ? "You cannot delete your own account" : undefined}
+          title={isMe ? "不能删除自己的账号" : undefined}
           className="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-50 text-slate-500 disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          Delete
+          删除
         </button>
       </td>
     </tr>

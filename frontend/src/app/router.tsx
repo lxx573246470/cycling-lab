@@ -19,7 +19,7 @@ import { AdminUsersPage } from "@/features/admin/AdminUsersPage";
 import { TrainingsListPage } from "@/features/training/TrainingsListPage";
 import { TrainingDetailPage } from "@/features/training/TrainingDetailPage";
 import { AppLayout } from "@/app/AppLayout";
-import { useAuthStore } from "@/features/auth/authStore";
+import { AUTH_DISABLED, useAuthStore } from "@/features/auth/authStore";
 
 const rootRoute = createRootRoute({
   component: () => <Outlet />,
@@ -30,6 +30,9 @@ const loginRoute = createRoute({
   path: "/login",
   component: LoginPage,
   beforeLoad: () => {
+    if (AUTH_DISABLED) {
+      throw redirect({ to: "/" });
+    }
     const { accessToken } = useAuthStore.getState();
     if (accessToken) {
       throw redirect({ to: "/" });
@@ -42,6 +45,7 @@ const protectedLayout = createRoute({
   id: "_protected",
   component: AppLayout,
   beforeLoad: () => {
+    if (AUTH_DISABLED) return;
     const { accessToken } = useAuthStore.getState();
     if (!accessToken) {
       throw redirect({ to: "/login" });

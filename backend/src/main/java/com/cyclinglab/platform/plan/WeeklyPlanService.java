@@ -81,7 +81,7 @@ public class WeeklyPlanService {
         UUID userId = TenantContext.getCurrentUserId();
         // De-dup check up front so the database unique index never has to fire
         // a constraint violation; we still rely on the index for race-safety.
-        weekRepo.findByUser_IdAndIsoYearAndIsoWeek(userId, req.isoYear(), req.isoWeek())
+        weekRepo.findByUser_IdAndIsoYearAndIsoWeek(userId, toShort(req.isoYear()), toShort(req.isoWeek()))
             .ifPresent(existing -> {
                 throw new WeeklyPlanConflictException(
                     req.isoYear(), req.isoWeek(), existing.getId()
@@ -96,8 +96,8 @@ public class WeeklyPlanService {
         WeeklyPlanEntity e = new WeeklyPlanEntity();
         e.setId(UUID.randomUUID());
         e.setUser(user);
-        e.setIsoYear(req.isoYear());
-        e.setIsoWeek(req.isoWeek());
+        e.setIsoYear(toShort(req.isoYear()));
+        e.setIsoWeek(toShort(req.isoWeek()));
         e.setTitle(emptyToNull(req.title()));
         e.setGoalMd(emptyToNull(req.goalMd()));
 
@@ -106,7 +106,7 @@ public class WeeklyPlanService {
             day.setId(UUID.randomUUID());
             day.setWeeklyPlan(e);
             day.setPlanDate(d);
-            day.setWeekday(IsoWeek.weekday(d));
+            day.setWeekday((short) IsoWeek.weekday(d));
             day.setStatus(DailyPlanStatus.PLANNED);
             e.getDays().add(day);
         }
@@ -204,8 +204,8 @@ public class WeeklyPlanService {
     private WeeklyPlanSummaryDto toSummary(WeeklyPlanEntity e) {
         return new WeeklyPlanSummaryDto(
             e.getId(),
-            e.getIsoYear(),
-            e.getIsoWeek(),
+            e.getIsoYear().intValue(),
+            e.getIsoWeek().intValue(),
             e.getTitle(),
             computeProgress(e.getDays()),
             e.getUpdatedAt() == null ? Instant.now() : e.getUpdatedAt()
@@ -221,8 +221,8 @@ public class WeeklyPlanService {
         LocalDate weekEnd = dates.get(6);
         return new WeeklyPlanDto(
             e.getId(),
-            e.getIsoYear(),
-            e.getIsoWeek(),
+            e.getIsoYear().intValue(),
+            e.getIsoWeek().intValue(),
             weekStart,
             weekEnd,
             e.getTitle(),
@@ -238,7 +238,7 @@ public class WeeklyPlanService {
         return new DailyPlanDto(
             d.getId(),
             d.getPlanDate(),
-            d.getWeekday(),
+            d.getWeekday().intValue(),
             d.getTargetText(),
             d.getTemplateId(),
             d.getTemplateVersion(),
@@ -268,5 +268,9 @@ public class WeeklyPlanService {
 
     private static String emptyToNull(String s) {
         return (s == null || s.isBlank()) ? null : s;
+    }
+
+    private Short toShort(int value) {
+        return (short) value;
     }
 }

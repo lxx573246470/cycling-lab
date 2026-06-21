@@ -22,7 +22,7 @@ export function TrainingChart({ samples }: { samples: TrainingSample[] }) {
   }, [samples]);
 
   if (!data) {
-    return <p className="text-sm text-slate-500 italic">No sample data.</p>;
+    return <p className="text-sm text-slate-500 italic">没有采样数据。</p>;
   }
 
   const w = 480;
@@ -87,11 +87,11 @@ export function TrainingChart({ samples }: { samples: TrainingSample[] }) {
       <div className="flex gap-4 mt-1 text-xs text-slate-500">
         <span>
           <span className="inline-block w-2 h-2 bg-blue-600 rounded-full mr-1" />
-          Power
+          功率
         </span>
         <span>
           <span className="inline-block w-2 h-2 bg-red-500 rounded-full mr-1" />
-          Heart rate
+          心率
         </span>
       </div>
     </div>

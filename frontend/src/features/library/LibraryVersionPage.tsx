@@ -16,15 +16,15 @@ export function LibraryVersionPage() {
   return (
     <>
       <PageHeader
-        title={`v${version} snapshot`}
-        description="Read-only view of a historical version. Edits always go through the latest version."
+        title={`v${version} 快照`}
+        description="历史版本只读查看；编辑始终在最新版本上进行。"
         actions={
           <Link
             to={"/library/$id" as any}
             params={{ id } as any}
             className="px-3 py-1.5 text-sm rounded border border-slate-300 hover:bg-slate-50"
           >
-            ← Back to template
+            ← 返回模板
           </Link>
         }
       />
@@ -32,20 +32,20 @@ export function LibraryVersionPage() {
       {query.error && <ErrorBanner message={(query.error as Error).message} />}
       {query.data && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <Card title="Blocks (read-only)">
+          <Card title="训练区块（只读）">
             <BlockEditor
               structure={parseStructure(query.data.structureJson) ?? { blocks: [] }}
               readOnly
               onChange={() => undefined}
             />
           </Card>
-          <Card title="Power curve">
+          <Card title="功率曲线">
             <PowerCurvePreview structure={parseStructure(query.data.structureJson) ?? { blocks: [] }} />
             {query.data.changeNote && (
-              <p className="text-sm text-slate-500 mt-2">Change note: {query.data.changeNote}</p>
+              <p className="text-sm text-slate-500 mt-2">变更说明：{query.data.changeNote}</p>
             )}
             <p className="text-xs text-slate-400 mt-1">
-              Saved {new Date(query.data.createdAt).toLocaleString()}
+              保存于 {new Date(query.data.createdAt).toLocaleString()}
             </p>
           </Card>
         </div>

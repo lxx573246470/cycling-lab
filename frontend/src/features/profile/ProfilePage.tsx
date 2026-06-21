@@ -103,11 +103,11 @@ function ProfileForm({
   return (
     <form onSubmit={onSubmit} className="space-y-6">
       <PageHeader
-        title="Rider profile"
+        title="骑手档案"
         description={
           hasProfile
-            ? "Edit any field and save. FTP / max HR changes immediately re-derive your zones."
-            : "No profile saved yet. Fill in the basics and we'll compute your zones automatically."
+            ? "修改任意字段后保存；FTP 或最大心率变化会立即重新计算训练分区。"
+            : "还没有保存骑手档案。填写基础信息后会自动计算训练分区。"
         }
         actions={
           <>
@@ -115,14 +115,14 @@ function ProfileForm({
               to={"/profile/zones" as any}
               className="px-3 py-1.5 text-sm rounded border border-slate-300 hover:bg-slate-50"
             >
-              View zones
+              查看分区
             </Link>
             <button
               type="submit"
               disabled={save.isPending}
               className="px-4 py-1.5 text-sm rounded bg-brand-500 hover:bg-brand-600 text-white font-medium disabled:opacity-50"
             >
-              {save.isPending ? "Saving…" : hasProfile ? "Save changes" : "Create profile"}
+              {save.isPending ? "保存中…" : hasProfile ? "保存修改" : "创建档案"}
             </button>
           </>
         }
@@ -131,19 +131,19 @@ function ProfileForm({
       {save.error && <ErrorBanner message={save.error.message} />}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card title="Basics">
+        <Card title="基础信息">
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Display name" error={formState.errors.displayName?.message}>
+            <Field label="显示名" error={formState.errors.displayName?.message}>
               <input className={inputCls} {...register("displayName")} />
             </Field>
-            <Field label="Height (cm)" error={formState.errors.heightCm?.message}>
+            <Field label="身高（cm）" error={formState.errors.heightCm?.message}>
               <input type="number" className={inputCls} {...register("heightCm", { valueAsNumber: true })} />
             </Field>
-            <Field label="Weight (kg)" error={formState.errors.weightKg?.message}>
+            <Field label="体重（kg）" error={formState.errors.weightKg?.message}>
               <input type="number" step="0.1" className={inputCls} {...register("weightKg", { valueAsNumber: true })} />
             </Field>
             {bmi && (
-              <Field label="BMI (derived)">
+              <Field label="BMI（自动计算）">
                 <div className="px-3 py-2 border border-slate-200 rounded-md text-sm text-slate-600 bg-slate-50">
                   {bmi}
                 </div>
@@ -152,45 +152,45 @@ function ProfileForm({
           </div>
         </Card>
 
-        <Card title="Power & HR">
+        <Card title="功率与心率">
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Max HR (bpm)" error={formState.errors.maxHr?.message}>
+            <Field label="最大心率（bpm）" error={formState.errors.maxHr?.message}>
               <input type="number" className={inputCls} {...register("maxHr", { valueAsNumber: true })} />
             </Field>
-            <Field label="Resting HR (bpm)" hint="optional" error={formState.errors.restingHr?.message}>
+            <Field label="静息心率（bpm）" hint="可选" error={formState.errors.restingHr?.message}>
               <input type="number" className={inputCls} {...register("restingHr", { valueAsNumber: true })} />
             </Field>
-            <Field label="Threshold HR (bpm)" hint="optional" error={formState.errors.thresholdHr?.message}>
+            <Field label="阈值心率（bpm）" hint="可选" error={formState.errors.thresholdHr?.message}>
               <input type="number" className={inputCls} {...register("thresholdHr", { valueAsNumber: true })} />
             </Field>
-            <Field label="FTP (watts)" error={formState.errors.ftp?.message}>
+            <Field label="FTP（瓦）" error={formState.errors.ftp?.message}>
               <input type="number" className={inputCls} {...register("ftp", { valueAsNumber: true })} />
             </Field>
-            <Field label="Cadence low (rpm)" error={formState.errors.cadenceLow?.message}>
+            <Field label="踏频下限（rpm）" error={formState.errors.cadenceLow?.message}>
               <input type="number" className={inputCls} {...register("cadenceLow", { valueAsNumber: true })} />
             </Field>
-            <Field label="Cadence high (rpm)" error={formState.errors.cadenceHigh?.message}>
+            <Field label="踏频上限（rpm）" error={formState.errors.cadenceHigh?.message}>
               <input type="number" className={inputCls} {...register("cadenceHigh", { valueAsNumber: true })} />
             </Field>
           </div>
         </Card>
 
-        <Card title="Devices">
+        <Card title="设备">
           <div className="grid grid-cols-1 gap-3">
-            <Field label="Power meter">
-              <input className={inputCls} placeholder="e.g. Quarq DZero" {...register("powerMeter")} />
+            <Field label="功率计">
+              <input className={inputCls} placeholder="例如：Quarq DZero" {...register("powerMeter")} />
             </Field>
-            <Field label="HR strap">
-              <input className={inputCls} placeholder="e.g. Wahoo Tickr" {...register("hrStrap")} />
+            <Field label="心率带">
+              <input className={inputCls} placeholder="例如：Wahoo Tickr" {...register("hrStrap")} />
             </Field>
-            <Field label="Head unit">
-              <input className={inputCls} placeholder="e.g. Wahoo Roam" {...register("headUnit")} />
+            <Field label="码表">
+              <input className={inputCls} placeholder="例如：Wahoo Roam" {...register("headUnit")} />
             </Field>
           </div>
         </Card>
 
-        <Card title="Goals (optional)">
-          <Field label="Notes" hint="One per line, e.g. 'short_term: 5h/week Z2'">
+        <Card title="目标（可选）">
+          <Field label="备注" hint="每行一条，例如：short_term: 每周 5 小时 Z2">
             <textarea
               className={`${inputCls} min-h-[140px]`}
               value={goalsText}

@@ -49,7 +49,7 @@ public class DailyPlanEntity {
     private LocalDate planDate;
 
     @Column(name = "weekday", nullable = false, updatable = false)
-    private Integer weekday;
+    private Short weekday;
 
     @Column(name = "target_text", columnDefinition = "text")
     private String targetText;

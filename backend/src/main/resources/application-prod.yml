@@ -18,6 +18,8 @@ spring:
       password: ${REDIS_PASSWORD:}                # required from env
 
 cyclinglab:
+  auth:
+    disabled: ${AUTH_DISABLED:false}
   jwt:
     # MUST be overridden in real env (>= 32 chars for HS256). The dev default
     # in application.yml is only for local laptop runs.

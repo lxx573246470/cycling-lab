@@ -53,7 +53,7 @@ function isoWeekOfYear(d: Date): number {
   return Math.floor((thursday.getTime() - jan1.getTime()) / (7 * 24 * 3600 * 1000)) + 1;
 }
 
-const WEEKDAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
+const WEEKDAY_LABELS = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"] as const;
 export function weekdayLabel(weekday: number): string {
   // ISO weekday 1..7 = Mon..Sun
   if (weekday < 1 || weekday > 7 || !Number.isInteger(weekday)) return '?';
@@ -69,6 +69,14 @@ export function formatWeekRange(weekStart: string, weekEnd: string): string {
 
 export const DAILY_STATUSES = ["PLANNED", "DONE", "PARTIAL", "SKIPPED", "RESCHEDULED"] as const;
 export type DailyStatus = (typeof DAILY_STATUSES)[number];
+
+export const DAILY_STATUS_LABELS: Record<DailyStatus, string> = {
+  PLANNED: "计划中",
+  DONE: "已完成",
+  PARTIAL: "部分完成",
+  SKIPPED: "跳过",
+  RESCHEDULED: "已改期",
+};
 
 export const dailyStatusSchema = z.enum(DAILY_STATUSES);
 
@@ -183,13 +191,13 @@ export const planApi = {
 };
 
 export function summariseProgress(p: WeeklyPlanProgress): string {
-  if (p.total === 0) return "no days";
-  if (p.done === p.total) return `done ${p.done}/${p.total}`;
+  if (p.total === 0) return "还没有安排";
+  if (p.done === p.total) return `已完成 ${p.done}/${p.total}`;
   const parts: string[] = [];
-  if (p.done) parts.push(`${p.done} done`);
-  if (p.partial) parts.push(`${p.partial} partial`);
-  if (p.planned) parts.push(`${p.planned} planned`);
-  if (p.skipped) parts.push(`${p.skipped} skipped`);
-  if (p.rescheduled) parts.push(`${p.rescheduled} rescheduled`);
+  if (p.done) parts.push(`${p.done} 已完成`);
+  if (p.partial) parts.push(`${p.partial} 部分完成`);
+  if (p.planned) parts.push(`${p.planned} 计划中`);
+  if (p.skipped) parts.push(`${p.skipped} 跳过`);
+  if (p.rescheduled) parts.push(`${p.rescheduled} 已改期`);
   return parts.join(" · ");
 }

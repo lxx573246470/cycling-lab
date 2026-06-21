@@ -58,10 +58,10 @@ public class ReviewEntity {
     private UUID scopeId;
 
     @Column(name = "iso_year")
-    private Integer isoYear;
+    private Short isoYear;
 
     @Column(name = "iso_week")
-    private Integer isoWeek;
+    private Short isoWeek;
 
     @Column(name = "period_start")
     private LocalDate periodStart;

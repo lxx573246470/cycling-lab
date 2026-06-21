@@ -2,9 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ErrorBanner, Field, PageHeader, Spinner } from "@/components/ui";
-import { libraryApi, type WorkoutTemplateListItem } from "@/features/library/libraryApi";
+import { categoryLabel, libraryApi, type WorkoutTemplateListItem } from "@/features/library/libraryApi";
 import {
   DAILY_STATUSES,
+  DAILY_STATUS_LABELS,
   formatWeekRange,
   planApi,
   weekdayLabel,
@@ -78,18 +79,18 @@ export function PlanEditPage() {
               to={"/plans" as any}
               className="px-3 py-1.5 text-sm rounded border border-slate-300 hover:bg-slate-50"
             >
-              Back
+              返回
             </Link>
             <button
               type="button"
               onClick={() => {
-                if (confirm("Delete this weekly plan? This also removes the 7 day cards.")) {
+                if (confirm("删除这个周计划？这也会删除 7 天的计划卡片。")) {
                   remove.mutate();
                 }
               }}
               className="px-3 py-1.5 text-sm rounded border border-rose-200 text-rose-700 hover:bg-rose-50"
             >
-              Delete
+              删除
             </button>
           </div>
         }
@@ -141,20 +142,20 @@ function PlanHeader({
 
   return (
     <div className="bg-white border border-slate-200 rounded-lg p-4 space-y-3">
-      <Field label="Title" hint="optional">
+      <Field label="标题" hint="可选">
         <input
           className={inputCls}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="e.g. Build week"
+          placeholder="例如：训练构建周"
         />
       </Field>
-      <Field label="Goal (Markdown)" hint="optional">
+      <Field label="目标（Markdown）" hint="可选">
         <textarea
           className={`${inputCls} min-h-[80px]`}
           value={goalMd}
           onChange={(e) => setGoalMd(e.target.value)}
-          placeholder="Weekly goal in markdown"
+          placeholder="本周目标，支持 Markdown"
         />
       </Field>
       <div className="flex justify-end">
@@ -164,7 +165,7 @@ function PlanHeader({
           disabled={!dirty || saving}
           className="px-4 py-1.5 text-sm rounded bg-brand-500 hover:bg-brand-600 text-white font-medium disabled:opacity-50"
         >
-          {saving ? "Saving…" : "Save header"}
+          {saving ? "保存中…" : "保存计划标题"}
         </button>
       </div>
     </div>
@@ -192,7 +193,7 @@ function ProgressBar({ progress }: { progress: WeeklyPlanDto["progress"] }) {
         {seg(progress.rescheduled, "bg-violet-500")}
       </div>
       <span className="text-xs text-slate-500 whitespace-nowrap">
-        {progress.done}/{progress.total} done
+        已完成 {progress.done}/{progress.total}
       </span>
     </div>
   );
@@ -243,40 +244,40 @@ function DayCard({
           </div>
           {templateLabel && (
             <div className="text-xs text-slate-400 mt-0.5">
-              Plan: {templateLabel}
+              计划：{templateLabel}
               {day.templateVersion ? ` (v${day.templateVersion})` : ""}
             </div>
           )}
         </div>
         <span className={`text-xs px-2 py-0.5 rounded ${statusColors[status]}`}>
-          {status}
+          {DAILY_STATUS_LABELS[status]}
         </span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <Field label="Target" hint="optional">
+        <Field label="训练目标" hint="可选">
           <input
             className={inputCls}
             value={targetText}
             onChange={(e) => setTargetText(e.target.value)}
-            placeholder="e.g. 60min Z2 endurance"
+            placeholder="例如：60 分钟 Z2 耐力"
           />
         </Field>
-        <Field label="Workout template" hint="optional">
+        <Field label="训练模板" hint="可选">
           <select
             className={inputCls}
             value={templateId}
             onChange={(e) => setTemplateId(e.target.value)}
           >
-            <option value="">— none —</option>
+            <option value="">— 无 —</option>
             {templates.map((t) => (
               <option key={t.id} value={t.id}>
-                {t.name} · {t.category}
+                {t.name} · {categoryLabel(t.category)}
               </option>
             ))}
           </select>
         </Field>
-        <Field label="Status">
+        <Field label="状态">
           <select
             className={inputCls}
             value={status}
@@ -284,17 +285,17 @@ function DayCard({
           >
             {DAILY_STATUSES.map((s) => (
               <option key={s} value={s}>
-                {s}
+                {DAILY_STATUS_LABELS[s]}
               </option>
             ))}
           </select>
         </Field>
-        <Field label="Notes" hint="optional">
+        <Field label="备注" hint="可选">
           <textarea
             className={`${inputCls} min-h-[80px]`}
             value={notesMd}
             onChange={(e) => setNotesMd(e.target.value)}
-            placeholder="Session notes (markdown)"
+            placeholder="本次训练备注，支持 Markdown"
           />
         </Field>
       </div>
@@ -323,7 +324,7 @@ function DayCard({
           disabled={!dirty || saving}
           className="px-4 py-1.5 text-sm rounded bg-brand-500 hover:bg-brand-600 text-white font-medium disabled:opacity-50"
         >
-          {saving ? "Saving…" : "Save day"}
+          {saving ? "保存中…" : "保存当天计划"}
         </button>
       </div>
     </div>

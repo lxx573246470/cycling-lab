@@ -1,7 +1,7 @@
 ---
 title: "Rider Profile"
 type: rider-profile
-updated: 2026-06-10
+updated: 2026-06-21
 tags:
   - cycling
   - profile
@@ -21,8 +21,8 @@ tags:
 
 - 最大心率：203
 - 静息心率：59
-- 乳酸阈心率：
-- FTP：200
+- 乳酸阈心率：约 178（2026-06-21 Zwift FTP Test 估算，需 20-30 分钟阈值测试确认）
+- FTP：201（2026-06-21 Zwift FTP Test）
 - 常用踏频区间：80-90
 
 ## 设备与数据源

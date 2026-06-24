@@ -2,7 +2,7 @@
 title: "2026-05-20 FIT 分析"
 date: 2026-05-20
 type: training-note
-fit_file: "../fit/20260520.fit"
+fit_file: "../fit/2026-05-20.fit"
 tags:
   - cycling
   - fit-analysis
@@ -34,4 +34,4 @@ tags:
 
 ## 链接
 
-- FIT: [20260520.fit](../fit/20260520.fit)
+- FIT: [2026-05-20.fit](../fit/2026-05-20.fit)

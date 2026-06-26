@@ -25,8 +25,8 @@ tags:
 | --- | --- | --- | --- | --- |
 | 周一 2026-06-22 | [FTP Test 后恢复日](2026-06-22-post-ftp-test-recovery.md) | 休息，或 30-40 分钟很轻松转腿 | [共享单车恢复骑 138 分钟，均心 116](../../../training/2026/week-26/notes/2026-06-22 共享单车恢复骑分析.md) | 时长偏长，整体低强度但有短段心率上探 |
 | 周二 2026-06-23 | [低 Z2 心率验证](2026-06-23-low-z2-hr-check.md) | 60 分钟，58-68% FTP | [室内低 Z2 60 分钟，均心 142，均功率 112W，评分 8.4/10](../../../training/2026/week-26/notes/2026-06-23 室内骑行训练分析.md) | ZWO: [2026-06-23-low-z2-hr-check.zwo](../../../workouts/zwo/2026-06-23-low-z2-hr-check.zwo) |
-| 周三 2026-06-24 | [甜区进阶主课](2026-06-24-sweet-spot-progression.md) | 70 分钟，3 x 10 分钟 88-90% FTP |  | ZWO: [2026-06-24-sweet-spot-progression.zwo](../../../workouts/zwo/2026-06-24-sweet-spot-progression.zwo) |
-| 周四 2026-06-25 | [恢复与纠正训练](2026-06-25-recovery-correctives.md) | 休息 + 15-25 分钟臀中肌/髋稳定 |  | 不骑也算完成 |
+| 周三 2026-06-24 | [甜区进阶主课](2026-06-24-sweet-spot-progression.md) | 70 分钟，3 x 10 分钟 88-90% FTP | 未练 | ZWO: [2026-06-24-sweet-spot-progression.zwo](../../../workouts/zwo/2026-06-24-sweet-spot-progression.zwo) |
+| 周四 2026-06-25 | [恢复与纠正训练](2026-06-25-recovery-correctives.md) | 休息 + 15-25 分钟臀中肌/髋稳定 | [补做 6/24 甜区进阶主课 70.5 分钟，IF 0.74，TSS 64，评分 8.5/10](../../../training/2026/week-26/notes/2026-06-25 补做 6月24日甜区进阶主课训练分析.md) | 当日实际替代为甜区质量课；6/26 应降级或休息 |
 | 周五 2026-06-26 | [短阈值前稳定课](2026-06-26-threshold-primer.md) | 60 分钟，4 x 4 分钟 95% FTP |  | ZWO: [2026-06-26-threshold-primer.zwo](../../../workouts/zwo/2026-06-26-threshold-primer.zwo) |
 | 周六 2026-06-27 | [周末户外可控耐力骑](2026-06-27-outdoor-controlled-endurance.md) | 2:00-2:30，平路/起伏 Z2 |  | 天热时缩短，不追均速 |
 | 周日 2026-06-28 | [恢复日或可选轻松转腿](2026-06-28-rest-or-recovery-spin.md) | 休息，或 30-45 分钟 45-55% FTP |  | 取决于周六疲劳 |

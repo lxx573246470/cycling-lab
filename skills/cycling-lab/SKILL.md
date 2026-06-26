@@ -36,8 +36,9 @@ Use rider data from `profile/rider-profile.md` when available. If max heart rate
 For uploaded FIT files:
 
 - Determine the activity date from the FIT session timestamp when possible; otherwise use the current local date.
-- Store the raw file under `training/YYYY/week-NN/fit/` using a stable date-based filename if the upload name is unclear.
+- Before analysis, use `$normalize-fit-filenames` to rename the raw file to a stable date-based filename under `training/YYYY/week-NN/fit/`.
 - Write generated notes to `training/YYYY/week-NN/notes/`.
+- Link the normalized source FIT from the generated note.
 - Pass known profile values from `profile/rider-profile.md` to the analyzer: age, height, weight, max heart rate, FTP, and athlete name.
 - After generating the note, summarize the ride in chat with the note path, primary intensity, heart-rate drift, cadence/power stability, and the next training implication.
 - If screenshots are provided with the FIT file, store them under `training/YYYY/week-NN/screenshots/` and link them from the note when useful.

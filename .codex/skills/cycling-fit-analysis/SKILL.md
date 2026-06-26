@@ -9,16 +9,13 @@ description: Analyze cycling or indoor-cycling FIT activity files and generate r
 
 Use `scripts/analyze_fit.py` for FIT files whenever possible. It parses session and 1-second record data, calculates heart-rate zones, cadence/power distributions, heart-rate drift, best rolling power, plan-stage execution, and writes a Chinese Markdown training note.
 
+Before analyzing any raw FIT file in the cycling-lab repository, use `$normalize-fit-filenames` to rename the source file to a stable activity-date filename. Pass the normalized path to `scripts/analyze_fit.py` and link that normalized source file from the generated note.
+
 Prefer planned-stage analysis over whole-ride-only analysis. If a matching daily plan exists under `plans/YYYY/week-NN/YYYY-MM-DD*.md`, the script auto-detects it and slices the FIT records by the plan's `阶段` / `时间` table. If the plan is elsewhere, pass `--plan-file /path/to/daily-plan.md`. Use the whole-ride summary only as context; the coaching interpretation should discuss each planned segment such as warmup, main sets, recovery valleys, cooldown, and any plan-shortfall or extra unplanned riding.
 
 Every planned-workout summary should include a 10-point training-goal match score, for example `7.5/10`. Base the score on the stated plan goal, completion versus planned duration, segment power adherence, heart-rate drift/control, and cadence stability. Explain the main reasons for the score and the most important deduction instead of presenting the number alone.
 
-When the parsed activity date is today, the script also normalizes the source FIT filename in place:
-
-- First file for the day: `yyyy-MM-dd.fit`
-- Additional files for the same day: `yyyy-MM-dd-1.fit`, `yyyy-MM-dd-2.fit`, etc.
-- Existing canonical names are left unchanged.
-- Past activity files are not renamed.
+The analyzer may also normalize today's FIT filename in place, but do not rely on that behavior for historical uploads. `$normalize-fit-filenames` is the required pre-analysis normalization step for all raw FIT files.
 
 Run from the skill directory or call the script by absolute path:
 

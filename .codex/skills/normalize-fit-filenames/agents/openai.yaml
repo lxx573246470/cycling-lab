@@ -1,0 +1,4 @@
+interface:
+  display_name: "Normalize FIT Filenames"
+  short_description: "Normalize cycling FIT source filenames"
+  default_prompt: "Use $normalize-fit-filenames before analyzing cycling FIT files."

@@ -35,3 +35,5 @@ date,iso_week,activity_count,duration_min,tss,ctl,atl,tsb,ftp_used,ftp_policy,ts
 2026-06-21,2026-W25,2,56.6,48,11.1,21.3,-10.2,200,historical_ftp_locked,recorded:note-inferred-np-percent,training/2026/week-25/notes/2026-06-21 Zwift FTP Test 分析.md;training/2026/week-25/notes/2026-06-21 室内 Z2 简单骑分析.md
 2026-06-22,2026-W26,0,0,0,10.9,18.3,-7.4,,historical_ftp_locked,,
 2026-06-23,2026-W26,1,60.4,34,11.4,20.5,-9.1,200,historical_ftp_locked,recorded:note-inferred-np-percent,training/2026/week-26/notes/2026-06-23 室内骑行训练分析.md
+2026-06-24,2026-W26,0,0,0,11.2,17.6,-6.4,,historical_ftp_locked,,
+2026-06-25,2026-W26,1,70.5,64,12.4,24.2,-11.8,201,historical_ftp_locked,recorded:note-explicit,training/2026/week-26/notes/2026-06-25 补做 6月24日甜区进阶主课训练分析.md

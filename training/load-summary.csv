@@ -39,3 +39,5 @@ date,iso_week,activity_count,duration_min,tss,ctl,atl,tsb,ftp_used,ftp_policy,ts
 2026-06-25,2026-W26,1,70.5,64,12.4,24.2,-11.8,201,historical_ftp_locked,recorded:note-explicit,training/2026/week-26/notes/2026-06-25 补做 6月24日甜区进阶主课训练分析.md
 2026-06-26,2026-W26,0,0,0,12.1,20.8,-8.6,,historical_ftp_locked,,
 2026-06-27,2026-W26,1,136.3,80,13.7,29.2,-15.5,200,historical_ftp_locked,recorded:note-inferred-np-percent,training/2026/week-26/notes/2026-06-27 户外可控耐力骑训练分析.md
+2026-06-28,2026-W26,0,0,0,13.4,25.1,-11.6,,historical_ftp_locked,,
+2026-06-29,2026-W27,1,45.2,29,13.8,25.6,-11.8,200,historical_ftp_locked,recorded:note-inferred-np-percent,training/2026/week-27/notes/2026-06-29 室内骑行训练分析.md

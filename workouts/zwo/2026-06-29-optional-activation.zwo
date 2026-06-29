@@ -1,0 +1,21 @@
+<workout_file>
+  <author>cycling-lab</author>
+  <name>2026-06-29 Optional Activation</name>
+  <description>Short activation ride after Sunday off. FTP reference: 201 W. Keep it sub-threshold and preserve Tuesday/Thursday quality.</description>
+  <sportType>bike</sportType>
+  <tags>
+    <tag name="activation"/>
+    <tag name="tempo"/>
+    <tag name="week 27"/>
+  </tags>
+  <workout>
+    <Warmup Duration="600" PowerLow="0.42" PowerHigh="0.62"/>
+    <SteadyState Duration="180" Power="0.80"/>
+    <SteadyState Duration="240" Power="0.55"/>
+    <SteadyState Duration="180" Power="0.83"/>
+    <SteadyState Duration="240" Power="0.55"/>
+    <SteadyState Duration="180" Power="0.85"/>
+    <SteadyState Duration="600" Power="0.60"/>
+    <Cooldown Duration="480" PowerLow="0.50" PowerHigh="0.38"/>
+  </workout>
+</workout_file>

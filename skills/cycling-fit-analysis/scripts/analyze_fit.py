@@ -1,18 +1,84 @@
 #!/usr/bin/env python3
 import argparse
+import struct
 import json
 import math
 import re
 import shutil
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from statistics import mean, median
 
 try:
     from fitparse import FitFile
+    from fitparse.utils import FitParseError
 except ImportError as exc:
     raise SystemExit("Missing dependency: fitparse. Install with `python3 -m pip install fitparse`.") from exc
+
+
+FIT_EPOCH = datetime(1989, 12, 31)
+
+SPORT_NAMES = {
+    2: "cycling",
+}
+
+SUB_SPORT_NAMES = {
+    6: "cycling",
+    7: "road",
+    8: "mountain",
+    9: "downhill",
+    10: "recumbent",
+    11: "cyclocross",
+    12: "hand_cycling",
+    13: "track_cycling",
+}
+
+FIT_FIELD_NAMES = {
+    0: {
+        0: "type",
+        1: "manufacturer",
+        2: "product",
+        4: "time_created",
+        8: "product_name",
+    },
+    18: {
+        2: "start_time",
+        5: "sport",
+        6: "sub_sport",
+        7: "total_elapsed_time",
+        8: "total_timer_time",
+        9: "total_distance",
+        11: "total_calories",
+        14: "avg_speed",
+        15: "max_speed",
+        16: "avg_heart_rate",
+        17: "max_heart_rate",
+        18: "avg_cadence",
+        19: "max_cadence",
+        20: "avg_power",
+        21: "max_power",
+        22: "total_ascent",
+        23: "total_descent",
+        34: "normalized_power",
+        57: "avg_temperature",
+        253: "timestamp",
+    },
+    20: {
+        0: "position_lat",
+        1: "position_long",
+        2: "altitude",
+        3: "heart_rate",
+        4: "cadence",
+        5: "distance",
+        6: "speed",
+        7: "power",
+        13: "temperature",
+        73: "enhanced_speed",
+        78: "enhanced_altitude",
+        253: "timestamp",
+    },
+}
 
 
 def numeric(value):
@@ -477,15 +543,220 @@ def training_goal_score(minutes, plan_segments, segment_metrics, drift, cadence_
     return {"score": score, "label": label, "notes": notes}
 
 
-def parse_fit(path):
-    fit = FitFile(str(path))
+def fit_timestamp(value):
+    if not numeric(value) or value == 0xFFFFFFFF:
+        return None
+    return FIT_EPOCH + timedelta(seconds=int(value))
+
+
+def semicircles_to_degrees(value):
+    if not numeric(value):
+        return None
+    return value * (180 / 2**31)
+
+
+def decode_fit_scalar(raw, base_type, endian):
+    base = base_type & 0x1F
+    if base == 7:
+        return raw.split(b"\x00", 1)[0].decode("utf-8", errors="ignore") or None
+    if base == 13:
+        return raw[0] if len(raw) == 1 else bytes(raw)
+
+    formats = {
+        0: ("B", 1, 0xFF),
+        1: ("b", 1, 0x7F),
+        2: ("B", 1, 0xFF),
+        3: ("b", 1, 0x7F),
+        4: ("H", 2, 0xFFFF),
+        5: ("h", 2, 0x7FFF),
+        6: ("I", 4, 0xFFFFFFFF),
+        8: ("i", 4, 0x7FFFFFFF),
+        10: ("B", 1, 0),
+        11: ("H", 2, 0),
+        12: ("I", 4, 0),
+        14: ("q", 8, 0x7FFFFFFFFFFFFFFF),
+        15: ("Q", 8, 0xFFFFFFFFFFFFFFFF),
+    }
+    spec = formats.get(base)
+    if not spec:
+        return None
+
+    fmt, item_size, invalid = spec
+    if len(raw) < item_size or len(raw) % item_size:
+        return None
+    values = []
+    for offset in range(0, len(raw), item_size):
+        value = struct.unpack(endian + fmt, raw[offset : offset + item_size])[0]
+        if value == invalid:
+            continue
+        values.append(value)
+    if not values:
+        return None
+    return values[0] if len(values) == 1 else values
+
+
+def scale_fit_value(global_num, field_num, value):
+    if value is None:
+        return None
+    if global_num == 0 and field_num == 4:
+        return fit_timestamp(value)
+    if global_num == 18:
+        if field_num in {2, 253}:
+            return fit_timestamp(value)
+        if field_num in {7, 8}:
+            return value / 1000
+        if field_num == 9:
+            return value / 100
+        if field_num in {14, 15}:
+            return value / 1000
+        if field_num in {18, 19, 20, 21, 34} and value == 0:
+            return None
+        if field_num == 5:
+            return SPORT_NAMES.get(value, value)
+        if field_num == 6:
+            return SUB_SPORT_NAMES.get(value, value)
+    if global_num == 20:
+        if field_num == 253:
+            return fit_timestamp(value)
+        if field_num in {0, 1}:
+            return semicircles_to_degrees(value)
+        if field_num == 2:
+            return value / 5 - 500
+        if field_num == 5:
+            return value / 100
+        if field_num == 6:
+            return value / 1000
+        if field_num == 73:
+            return value / 1000
+        if field_num == 78:
+            return value / 5 - 500
+    return value
+
+
+def parse_fit_tolerant(path):
+    data = Path(path).read_bytes()
+    if len(data) < 14:
+        raise FitParseError("FIT file is too short")
+
+    header_size = data[0]
+    data_size = struct.unpack_from("<I", data, 4)[0]
+    pos = header_size
+    end = header_size + data_size
+    local_defs = {}
     messages = defaultdict(list)
-    for msg in fit.get_messages():
-        data = {field.name: field.value for field in msg}
-        messages[msg.name].append(data)
+    last_timestamp = None
+
+    while pos < end:
+        header = data[pos]
+        pos += 1
+        if header & 0x80:
+            local_num = (header >> 5) & 0x03
+            timestamp_offset = header & 0x1F
+            definition = local_defs.get(local_num)
+            if not definition:
+                break
+            fields, pos = parse_tolerant_data_message(data, pos, definition, end)
+            if last_timestamp is not None:
+                base = int((last_timestamp - FIT_EPOCH).total_seconds())
+                timestamp = base - (base % 32) + timestamp_offset
+                if timestamp <= base:
+                    timestamp += 32
+                fields["timestamp"] = fit_timestamp(timestamp)
+                last_timestamp = fields["timestamp"]
+            messages[definition["message_name"]].append(fields)
+            continue
+
+        local_num = header & 0x0F
+        if header & 0x40:
+            has_developer_fields = bool(header & 0x20)
+            if pos + 5 > end:
+                break
+            pos += 1
+            architecture = data[pos]
+            pos += 1
+            endian = ">" if architecture else "<"
+            global_num = struct.unpack_from(endian + "H", data, pos)[0]
+            pos += 2
+            field_count = data[pos]
+            pos += 1
+            fields = []
+            for _ in range(field_count):
+                if pos + 3 > end:
+                    break
+                fields.append((data[pos], data[pos + 1], data[pos + 2]))
+                pos += 3
+            developer_fields = []
+            if has_developer_fields and pos < end:
+                developer_count = data[pos]
+                pos += 1
+                for _ in range(developer_count):
+                    if pos + 3 > end:
+                        break
+                    developer_fields.append((data[pos], data[pos + 1], data[pos + 2]))
+                    pos += 3
+            message_names = {
+                0: "file_id",
+                18: "session",
+                19: "lap",
+                20: "record",
+                21: "event",
+                23: "device_info",
+                34: "activity",
+            }
+            local_defs[local_num] = {
+                "global_num": global_num,
+                "message_name": message_names.get(global_num, f"message_{global_num}"),
+                "fields": fields,
+                "developer_fields": developer_fields,
+                "endian": endian,
+            }
+            continue
+
+        definition = local_defs.get(local_num)
+        if not definition:
+            break
+        fields, pos = parse_tolerant_data_message(data, pos, definition, end)
+        if fields.get("timestamp"):
+            last_timestamp = fields["timestamp"]
+        messages[definition["message_name"]].append(fields)
+
     records = [r for r in messages.get("record", []) if r.get("timestamp")]
     records.sort(key=lambda r: r["timestamp"])
     return messages, records
+
+
+def parse_tolerant_data_message(data, pos, definition, end):
+    global_num = definition["global_num"]
+    field_names = FIT_FIELD_NAMES.get(global_num, {})
+    values = {}
+    for field_num, size, base_type in definition["fields"]:
+        raw = data[pos : min(pos + size, end)]
+        pos += size
+        name = field_names.get(field_num)
+        if not name:
+            continue
+        value = decode_fit_scalar(raw, base_type, definition["endian"])
+        value = scale_fit_value(global_num, field_num, value)
+        if value is not None:
+            values[name] = value
+
+    for _, size, _ in definition["developer_fields"]:
+        pos += size
+    return values, pos
+
+
+def parse_fit(path):
+    try:
+        fit = FitFile(str(path))
+        messages = defaultdict(list)
+        for msg in fit.get_messages():
+            data = {field.name: field.value for field in msg}
+            messages[msg.name].append(data)
+        records = [r for r in messages.get("record", []) if r.get("timestamp")]
+        records.sort(key=lambda r: r["timestamp"])
+        return messages, records
+    except FitParseError:
+        return parse_fit_tolerant(path)
 
 
 def activity_start(messages, records):

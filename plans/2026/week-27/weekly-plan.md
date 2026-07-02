@@ -24,7 +24,7 @@ tags:
 | --- | --- | --- | --- | --- |
 | 周一 2026-06-29 | [可选激活骑](2026-06-29-optional-activation.md) | 45 分钟，3 x 3 分钟 80-85% FTP | [室内激活骑 45.2 分钟，IF 0.62，TSS 29，评分 8.7/10](../../../training/2026/week-27/notes/2026-06-29%20室内骑行训练分析.md) | ZWO: [2026-06-29-optional-activation.zwo](../../../workouts/zwo/2026-06-29-optional-activation.zwo) |
 | 周二 2026-06-30 | [节奏唤醒与心率检查](2026-06-30-tempo-activation.md) | 60 分钟，3 段 78-85% FTP |  | ZWO: [2026-06-30-tempo-activation.zwo](../../../workouts/zwo/2026-06-30-tempo-activation.zwo) |
-| 周三 2026-07-01 | [恢复与纠正训练](2026-07-01-recovery-correctives.md) | 休息或 25-35 分钟很轻松转腿 + 纠正 |  | 周二若心率可控，可做轻松转腿；否则完全休息 |
+| 周三 2026-07-01 | [恢复与纠正训练](2026-07-01-recovery-correctives.md) | 休息或 25-35 分钟很轻松转腿 + 纠正 | [户外恢复骑 87.9 分钟，16.48 km，平均心率 124，评分 6.5/10](../../../training/2026/week-27/notes/2026-07-01%20户外恢复骑训练分析.md) | 周二若心率可控，可做轻松转腿；否则完全休息 |
 | 周四 2026-07-02 | [甜区稳态质量课](2026-07-02-sweet-spot-steady-2x15.md) | 75 分钟，2 x 15 分钟 88-90% FTP |  | ZWO: [2026-07-02-sweet-spot-steady-2x15.zwo](../../../workouts/zwo/2026-07-02-sweet-spot-steady-2x15.zwo) |
 | 周五 2026-07-03 | 休息 | 完全休息，早睡和补水 |  | 不安排补强度 |
 | 周六 2026-07-04 | [周末严格控心率户外耐力骑](2026-07-04-outdoor-hr-capped-endurance.md) | 2:00-2:30，>150 bpm <30% |  | 天热或睡眠差则 75-90 分钟 |

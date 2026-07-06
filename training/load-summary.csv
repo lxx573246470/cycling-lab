@@ -41,3 +41,9 @@ date,iso_week,activity_count,duration_min,tss,ctl,atl,tsb,ftp_used,ftp_policy,ts
 2026-06-27,2026-W26,1,136.3,80,13.7,29.2,-15.5,200,historical_ftp_locked,recorded:note-inferred-np-percent,training/2026/week-26/notes/2026-06-27 户外可控耐力骑训练分析.md
 2026-06-28,2026-W26,0,0,0,13.4,25.1,-11.6,,historical_ftp_locked,,
 2026-06-29,2026-W27,1,45.2,29,13.8,25.6,-11.8,200,historical_ftp_locked,recorded:note-inferred-np-percent,training/2026/week-27/notes/2026-06-29 室内骑行训练分析.md
+2026-06-30,2026-W27,0,0,0,13.4,22,-8.5,,historical_ftp_locked,,
+2026-07-01,2026-W27,0,0,0,13.1,18.8,-5.7,,historical_ftp_locked,,
+2026-07-02,2026-W27,0,0,0,12.8,16.1,-3.3,,historical_ftp_locked,,
+2026-07-03,2026-W27,1,75.3,66,14.1,23.3,-9.2,200,historical_ftp_locked,recorded:note-inferred-np-percent,training/2026/week-27/notes/2026-07-03 室内骑行训练分析.md
+2026-07-04,2026-W27,0,0,0,13.7,19.9,-6.2,,historical_ftp_locked,,
+2026-07-05,2026-W27,1,186,100,15.8,31.4,-15.6,200,historical_ftp_locked,recorded:note-inferred-np-percent,training/2026/week-27/notes/2026-07-05 高温户外耐力骑分析.md

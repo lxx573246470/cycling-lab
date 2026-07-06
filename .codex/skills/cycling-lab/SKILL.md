@@ -79,7 +79,7 @@ Before generating or changing plans, read enough recent context to make the next
 
 Minimum planning context:
 
-- `profile/rider-profile.md` for current FTP, max heart rate, goals, equipment, constraints, and known fit or body issues.
+- `profile/rider-profile.md` for current FTP, max heart rate, equipment, constraints, known fit/body issues, and the rider's short-, medium-, and long-term training goals.
 - The current week plan at `plans/YYYY/week-NN/weekly-plan.md`, including both planned workouts and the `实际记录` column.
 - The specific daily plan being created or changed, if it already exists under `plans/YYYY/week-NN/`.
 - The latest 3-5 training notes from `training/YYYY/week-NN/notes/` and, when needed, the previous week notes too.
@@ -89,6 +89,16 @@ Minimum planning context:
 When planning, explicitly reconcile planned vs actual training. If the user skipped, shortened, downgraded, or substituted a recent workout, adjust the next 1-3 days rather than blindly preserving the original sequence. Account for current FTP, max heart rate, recent fatigue, heart-rate drift, cadence/power stability, target event goals, available weekday time, weekend availability, and recovery from the last few sessions.
 
 Do not "make up" missed intensity by stacking it onto the next day. If recent training shows high fatigue, weak muscle activation, unusual pain, poor sleep, overtime work, or high heart-rate response, reduce duration, intensity, or complexity and document the reason in the daily plan.
+
+### Goal Alignment
+
+Weekly plans must explicitly connect the next 7 days to `profile/rider-profile.md` goals, not just to recent fatigue.
+
+- Extract the rider's stated `近期目标`, `中期目标`, and `长期目标` before choosing weekly structure.
+- If the medium-term goal includes long-distance or climbing targets, include a clear progression mechanism in the weekly plan, such as weekend long-ride duration/distance/elevation progression, fueling practice, heat adaptation, pacing discipline, or climbing cadence work.
+- Do not let a recent bad ride automatically turn the whole week into low-risk recovery if that would ignore the rider's goal and preferences. Instead, preserve goal-relevant work where reasonable and add downgrade gates for fatigue, heat, heart-rate drift, pain, or poor sleep.
+- In every weekly plan, include a short section or bullets explaining how the week serves the profile goals, for example "200 km progression", "climbing durability", "FTP development", or "weight-management aerobic volume".
+- If a plan is deliberately conservative despite an ambitious profile goal, state the reason and what target-specific work resumes next.
 
 Support two plan types:
 

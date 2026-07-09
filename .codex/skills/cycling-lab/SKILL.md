@@ -40,6 +40,7 @@ For uploaded FIT files:
 - Write generated notes to `training/YYYY/week-NN/notes/`.
 - Link the normalized source FIT from the generated note.
 - Pass known profile values from `profile/rider-profile.md` to the analyzer: age, height, weight, max heart rate, FTP, and athlete name.
+- If the user asks for a completed workout summary and has not provided recovery context, ask them to provide: 日期, HRV, 静息心率, 睡眠时长/质量, 主观疲劳 1-10, 腿部感觉, 今天是否有训练计划, and 备注（饮酒、熬夜、生病、压力、炎热、脱水等）. Use these as optional context for fatigue/readiness interpretation alongside the FIT data and recent training load.
 - After generating the note, summarize the ride in chat with the note path, the 10-point training-goal match score, primary intensity, plan-stage execution, heart-rate drift, cadence/power stability, and the next training implication.
 - If screenshots are provided with the FIT file, store them under `training/YYYY/week-NN/screenshots/` and link them from the note when useful.
 - After adding or changing training notes with TSS or power data, refresh `training/load-summary.csv`:
@@ -87,6 +88,8 @@ Minimum planning context:
 - Any recent fitting, injury, fatigue, schedule, or equipment notes that are linked from the weekly plan or latest review.
 
 When planning, explicitly reconcile planned vs actual training. If the user skipped, shortened, downgraded, or substituted a recent workout, adjust the next 1-3 days rather than blindly preserving the original sequence. Account for current FTP, max heart rate, recent fatigue, heart-rate drift, cadence/power stability, target event goals, available weekday time, weekend availability, and recovery from the last few sessions.
+
+When available, include HRV, resting heart rate, sleep quality, subjective fatigue, leg feel, illness/stress/heat/dehydration notes, and whether the user already has a training plan today in readiness decisions. Treat HRV as a trend against the rider's own baseline, not as a single-day pass/fail metric.
 
 Do not "make up" missed intensity by stacking it onto the next day. If recent training shows high fatigue, weak muscle activation, unusual pain, poor sleep, overtime work, or high heart-rate response, reduce duration, intensity, or complexity and document the reason in the daily plan.
 

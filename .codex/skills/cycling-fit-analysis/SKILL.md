@@ -43,6 +43,20 @@ Optional arguments:
 
 Interpret the generated metrics, then add practical coaching context:
 
+- When the user asks to summarize or analyze a completed workout and has not provided recovery context, ask for the optional recovery inputs before final coaching interpretation when practical:
+
+```text
+日期：
+HRV：
+静息心率：
+睡眠时长/质量：
+主观疲劳 1-10：
+腿部感觉：
+今天是否有训练计划：
+备注：饮酒、熬夜、生病、压力、炎热、脱水等
+```
+
+- Use HRV as a personal-trend signal, not an isolated diagnosis. Interpret it together with resting heart rate, sleep, subjective fatigue, leg feel, recent TSS/ATL/TSB, heat exposure, dehydration, illness, and the planned next workout.
 - If most time is in heart-rate Z3/Z4, call it tempo/threshold-leaning rather than easy aerobic work.
 - If heart-rate drift is under about 5%, aerobic durability for that effort was stable; above 5-7% suggests heat, dehydration, fatigue, or pacing drift.
 - For planned workouts, analyze warmup, each work interval, each recovery segment, and cooldown separately. Compare actual average power/heart rate/cadence against that segment's target before making whole-ride claims.

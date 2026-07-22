@@ -78,6 +78,17 @@ When creating or editing daily/weekly plans:
 
 Before generating or changing plans, read enough recent context to make the next workout fit the current week instead of treating it as an isolated template.
 
+When creating a new `plans/YYYY/week-NN/weekly-plan.md`, also create the matching training directories before finishing:
+
+```text
+training/YYYY/week-NN/fit/
+training/YYYY/week-NN/notes/
+training/YYYY/week-NN/screenshots/
+```
+
+Use the same ISO year and week number as the weekly plan. Verify the directories exist even when the weekly plan is created before any training files are available.
+Add a `.gitkeep` file to each empty directory so the weekly training structure remains present after a Git commit. Remove the placeholder only if the repository convention requires it when real files are added.
+
 Minimum planning context:
 
 - `profile/rider-profile.md` for current FTP, max heart rate, equipment, constraints, known fit/body issues, and the rider's short-, medium-, and long-term training goals.
@@ -117,6 +128,33 @@ Use for weekday structured training, any indoor-trainer plan, any Zwift plan, or
 - Include warmup, main set, cooldown, target purpose, adjustment rules, and expected RPE/heart-rate response.
 - Keep weekly-plan entries concise and link to the detailed plan plus the ZWO file.
 - If the user says "室内", "骑行台", "Zwift", "zwo", or "智能骑行台", treat the plan as a Zwift/Indoor Power Workout unless they explicitly say not to create a ZWO file.
+
+#### ERG Power Command Compensation
+
+Treat the training target and the ZWO ERG command as separate values when `profile/rider-profile.md` defines an ERG compensation factor.
+
+- Keep the daily/weekly plan's prescribed watts and FTP percentages as the physiological training target. Do not silently redefine FTP or claim that the rider's target intensity increased.
+- Apply the profile compensation to main work intervals and sustained endurance platform segments. Leave warmup/cooldown ramps, recovery valleys, FTP tests, sprints, free rides, and outdoor workouts uncompensated unless the profile explicitly says otherwise.
+- Calculate the integer command watts first, then derive the ZWO fraction:
+
+```text
+zwo_command_watts = round(training_target_watts * (1 + compensation_rate))
+zwo_power_fraction = zwo_command_watts / ftp
+```
+
+- Write `Power` or `OnPower` from `zwo_power_fraction`, normally to three decimal places. Keep `OffPower` uncompensated when it is a recovery valley.
+- Example with a 2% profile compensation and FTP 201 W: prescribe 150 W in the plan, write 153 W in the ZWO file, and use `Power="0.761"` because `153 / 201 = 0.761` after rounding.
+- Add an `ERG 指令补偿` line to the daily plan's `## Zwift 文件` section. Show both the training target and compensated ZWO command for each distinct main-work power so the difference is auditable.
+- When analyzing the completed workout, compare actual power with the physiological training target, not the compensated command. Also record the command value separately when evaluating whether the compensation is calibrated.
+- Do not stack this device compensation on top of an ad hoc workout-intensity increase. Apply adjustment or downgrade rules to the training target first, then calculate the compensated ZWO command once.
+
+When the profile has no current compensation value, or when the trainer calibration, firmware, power source, or connection path changed, estimate a new value only from reliable completed ERG data:
+
+- Use at least 6 complete constant-power main-work segments across at least 3 sessions.
+- Include segments at least 3 minutes long with stable cadence, correct plan alignment, and no dropout, manual override, ERG spiral-of-death, or obvious execution failure.
+- Exclude ramps, cooldowns, recovery valleys, sprints, FTP tests, free rides, truncated segments, and segments limited by fatigue rather than trainer control.
+- Use the median of `actual_average_power / zwo_command_power` as the robust center, invert it to obtain the correction, round to the nearest 1 percentage point, and cap the initial automatic compensation at 3%.
+- Recheck after 3-5 further qualified sessions. Change the stored rate only when the residual direction is consistent across sessions; do not react to a single workout.
 
 ### Weekend Outdoor Road Rides
 

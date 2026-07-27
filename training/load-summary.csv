@@ -64,3 +64,7 @@ date,iso_week,activity_count,duration_min,tss,ctl,atl,tsb,ftp_used,ftp_policy,ts
 2026-07-20,2026-W30,0,0,0,15.8,13.7,2.1,,historical_ftp_locked,,
 2026-07-21,2026-W30,1,55.4,53,16.7,19.3,-2.6,201,historical_ftp_locked,recorded:note-explicit,training/2026/week-30/notes/2026-07-21 甜区稳定性复测 3x10 分钟训练分析.md
 2026-07-22,2026-W30,0,0,0,16.3,16.6,-0.3,,historical_ftp_locked,,
+2026-07-23,2026-W30,1,45,49,17.1,21.2,-4.1,201,historical_ftp_locked,recorded:note-explicit,training/2026/week-30/notes/2026-07-23 VO2max 基线复测 4x3 分钟训练分析.md
+2026-07-24,2026-W30,0,0,0,16.7,18.2,-1.5,,historical_ftp_locked,,
+2026-07-25,2026-W30,0,0,0,16.3,15.6,0.7,,historical_ftp_locked,,
+2026-07-26,2026-W30,1,55.4,28,16.6,17.4,-0.8,201,historical_ftp_locked,recorded:note-explicit,training/2026/week-30/notes/2026-07-26 室内恢复骑训练分析.md

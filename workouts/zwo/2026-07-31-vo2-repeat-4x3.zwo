@@ -1,18 +1,18 @@
 <workout_file>
   <author>cycling-lab</author>
-  <name>2026-07-31 VO2 Repeat 4x3 Complete</name>
-  <description>Repeat four 3-minute VO2 intervals and complete all recovery and cooldown stages. Main work uses the profile 2% ERG command compensation. FTP reference: 201 W.</description>
+  <name>2026-07-31 VO2 Repeat 4x3 Progress</name>
+  <description>Progress four 3-minute VO2 intervals by about 2 W each and complete all recovery and cooldown stages. Main work uses the profile 2% ERG command compensation. FTP reference: 201 W.</description>
   <sportType>bike</sportType>
   <tags><tag name="vo2max"/><tag name="week 31"/></tags>
   <workout>
     <Warmup Duration="900" PowerLow="0.45" PowerHigh="0.72"/>
-    <SteadyState Duration="180" Power="1.100" Cadence="90"/>
+    <SteadyState Duration="180" Power="1.109" Cadence="90"/>
     <SteadyState Duration="180" Power="0.50"/>
-    <SteadyState Duration="180" Power="1.119" Cadence="90"/>
+    <SteadyState Duration="180" Power="1.129" Cadence="90"/>
     <SteadyState Duration="180" Power="0.50"/>
-    <SteadyState Duration="180" Power="1.119" Cadence="90"/>
+    <SteadyState Duration="180" Power="1.129" Cadence="90"/>
     <SteadyState Duration="180" Power="0.50"/>
-    <SteadyState Duration="180" Power="1.144" Cadence="90"/>
+    <SteadyState Duration="180" Power="1.154" Cadence="90"/>
     <SteadyState Duration="180" Power="0.50"/>
     <SteadyState Duration="540" Power="0.612" Cadence="85"/>
     <Cooldown Duration="720" PowerLow="0.52" PowerHigh="0.38"/>

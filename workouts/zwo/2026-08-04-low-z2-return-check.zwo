@@ -1,0 +1,12 @@
+<workout_file>
+  <author>cycling-lab</author>
+  <name>2026-08-04 Posterior Chain Recovery Spin</name>
+  <description>Low-torque recovery spin for residual posterior-chain soreness. Physiological target 110 W; 2% ERG compensation commands 112 W. FTP reference: 201 W.</description>
+  <sportType>bike</sportType>
+  <tags><tag name="recovery"/><tag name="return-to-training"/><tag name="week 32"/></tags>
+  <workout>
+    <Warmup Duration="600" PowerLow="0.38" PowerHigh="0.50"/>
+    <SteadyState Duration="1200" Power="0.557" Cadence="88"/>
+    <Cooldown Duration="600" PowerLow="0.50" PowerHigh="0.38"/>
+  </workout>
+</workout_file>

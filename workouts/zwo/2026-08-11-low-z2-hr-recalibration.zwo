@@ -1,0 +1,12 @@
+<workout_file>
+  <author>cycling-lab</author>
+  <name>2026-08-11 Low Z2 HR Recalibration</name>
+  <description>Controlled low Z2 aerobic ride after high HR drift. Physiological target 115 W; 2% ERG compensation commands 117 W. FTP reference: 201 W.</description>
+  <sportType>bike</sportType>
+  <tags><tag name="endurance"/><tag name="z2"/><tag name="week 33"/></tags>
+  <workout>
+    <Warmup Duration="600" PowerLow="0.45" PowerHigh="0.55"/>
+    <SteadyState Duration="2100" Power="0.582" Cadence="88"/>
+    <Cooldown Duration="600" PowerLow="0.52" PowerHigh="0.38"/>
+  </workout>
+</workout_file>
